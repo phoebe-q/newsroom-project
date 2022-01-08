@@ -1,0 +1,8 @@
+{
+  "name": "newsroom",
+  "version": "1.0.0",
+  "dependencies": {
+    "got": "^11.8.2",
+    "jsdom": "^18.0.0"
+  }
+}

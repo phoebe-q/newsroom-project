@@ -1,0 +1,64 @@
+@import play.mvc.Http.Request
+@(request: Request)
+<!DOCTYPE html>
+  <html>
+    <h1>Welcome to NewsRoom!</h1>
+    <h3>Enter search terms related to your topic to begin!</h3>
+      <button onclick="populateDB()">populateDB</button>
+    <form>
+      <input id="searchTerm" type="text"/>
+      <button onclick="search()">Search</button>
+    </form>
+    <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
+    <script type="text/javascript">
+
+            let ws;
+
+            function init() {
+              openWebSocketConnection();
+            }
+
+            function search() {
+                console.log("search clicked");
+                const searchTerm = document.getElementById("searchTerm").value;
+                console.log(searchTerm)
+                ws.send(JSON.stringify({
+                    messagetype: "searchTerm",
+                    searchTerm: searchTerm
+                }));
+            }
+
+            function populateDB() {
+                console.log("populate");
+                ws.send(JSON.stringify({
+                    messagetype: "populateDB",
+                }));
+            }
+
+            function openWebSocketConnection() {
+              const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
+
+              //alert(wsURL);
+              ws = new WebSocket(wsURL);
+              ws.onmessage = function (event) {
+                let message;
+                console.log("message received starting function")
+                message = JSON.parse(event.data);
+                console.log(message);
+                switch (message.messagetype) {
+                  case "searchTerm":
+                      console.log("searching...");
+                      console.log(message.searchTerm);
+                      window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
+                  case "populateDB":
+                      window.location.href = ("http://localhost:9000/articles/index");
+                  default:
+                      console.log("defaulted instead of realising it was url")
+                      return console.log(message);
+                }
+              };
+            }
+
+    </script>
+    </body>
+  </html>
