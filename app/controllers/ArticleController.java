@@ -64,7 +64,7 @@ public class ArticleController extends Controller {
                         .field("content", content)
                         .endObject();
 
-                IndexRequest indexRequest = new IndexRequest("people");
+                IndexRequest indexRequest = new IndexRequest("bbc-articles");
                 indexRequest.source(builder);
 
                 IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
@@ -79,18 +79,27 @@ public class ArticleController extends Controller {
                 ClientConfiguration.builder().connectedTo("localhost:9200").build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
 
-        MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("content", searchTerm);
         SearchRequest searchRequest = new SearchRequest();
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(matchQueryBuilder);
-        searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] searchHits = response.getHits().getHits();
         List<Article> results =
                 Arrays.stream(searchHits)
                         .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
                         .collect(Collectors.toList());
-        Article article = results.get(0);
-        return ok(views.html.articles.show.render(article));
+        System.out.println("Results are: " + results );
+        return null;
+        //MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("content", searchTerm);
+        //SearchRequest searchRequest = new SearchRequest("bbc-articles");
+        //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        //searchSourceBuilder.query(matchQueryBuilder);
+        //searchRequest.source(searchSourceBuilder);
+        //SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
+        //SearchHit[] searchHits = response.getHits().getHits();
+        //List<Article> results =
+                //Arrays.stream(searchHits)
+                        //.map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
+                        //.collect(Collectors.toList());
+        //Article article = results.get(1);
+        //return ok(views.html.articles.show.render(article));
     }
 }

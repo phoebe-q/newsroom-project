@@ -3,7 +3,6 @@ package models;
 public class Article {
 
     public String category;
-    public String title;
     public String content;
 
     public Article() {
@@ -12,7 +11,6 @@ public class Article {
     Article(String category, String title, String content) {
         super();
         this.category = category;
-        this.title = title;
         this.content = content;
     }
 
@@ -22,14 +20,6 @@ public class Article {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
