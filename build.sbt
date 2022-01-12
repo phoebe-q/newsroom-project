@@ -8,7 +8,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 scalaVersion := "2.13.6"
 
 libraryDependencies += (guice)
-libraryDependencies += jdbc
+
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.1"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.1"
 libraryDependencies += "org.elasticsearch" % "elasticsearch" % "7.16.2"
@@ -20,9 +20,7 @@ libraryDependencies += "com.alibaba" % "fastjson" % "1.2.79"
 libraryDependencies ++= Seq(
   javaJdbc
 )
-libraryDependencies ++= Seq(
-  "mysql" % "mysql-connector-java" % "8.0.25"
-)
+
 
 
 

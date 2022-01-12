@@ -12,7 +12,7 @@
     <h3>Enter search terms related to your topic to begin!</h3>
     <form>
       <input id="searchTerm" type="text"/>
-      <button onclick="search()">Search</button>
+      <button type="button" class="btn btn-default" onclick="search()">Search</button>
     </form>
     <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
     <script type="text/javascript">
