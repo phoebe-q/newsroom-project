@@ -2,6 +2,12 @@
 @(request: Request)
 <!DOCTYPE html>
   <html>
+      <head>
+          <title>NewsRoom</title>
+          <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap.min.css")">
+          <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap-theme.min.css")">
+          <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/style.css")">
+      </head>
     <h1>Welcome to NewsRoom!</h1>
     <h3>Enter search terms related to your topic to begin!</h3>
     <form>
@@ -23,16 +29,16 @@
                 console.log(searchTerm)
                 ws.send(JSON.stringify({
                     messagetype: "searchTerm",
-                    searchTerm: searchTerm
+                    searchTerm: searchTerm,
                 }));
             }
 
-            function populateDB() {
-                console.log("populate");
-                ws.send(JSON.stringify({
-                    messagetype: "populateDB",
-                }));
-            }
+            //function populateDB() {
+              //  console.log("populate");
+                //ws.send(JSON.stringify({
+                  //  messagetype: "populateDB",
+                //}));
+            //}
 
             function openWebSocketConnection() {
               const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
@@ -49,8 +55,8 @@
                       console.log("searching...");
                       console.log(message.searchTerm);
                       window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
-                  case "populateDB":
-                      window.location.href = ("http://localhost:9000/articles/index");
+                  //case "populateDB":
+                    //  window.location.href = ("http://localhost:9000/articles/index");
                   default:
                       console.log("defaulted instead of realising it was url")
                       return console.log(message);

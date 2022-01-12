@@ -3,6 +3,7 @@ package actors;
 import akka.actor.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +57,8 @@ public class WebSocketActor extends AbstractActor {
                     try {
                         ObjectNode readyMessage = Json.newObject();
                         readyMessage.put("messagetype", message.get("messagetype").asText());
-                        if(message.get("messagetype").asText() == "searchTerm") {
+                        if(message.get("messagetype").asText().equals("searchTerm")) {
+                            System.out.println("seeing messagetype is searchTerm");
                             readyMessage.put("searchTerm", message.get("searchTerm").asText());
                         }
                         processMessage(message.get("messagetype").asText(), message);
@@ -69,7 +71,6 @@ public class WebSocketActor extends AbstractActor {
 
     public void processMessage(String messageType, JsonNode message) throws Exception{
 
-        System.out.println("process message being hit");
         EventProcessor processor = eventProcessors.get(messageType);
         if (processor==null) {
             // Unknown event type received

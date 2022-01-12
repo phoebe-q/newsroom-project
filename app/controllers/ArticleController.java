@@ -1,14 +1,15 @@
 package controllers;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.xcontent.XContentBuilder;
@@ -20,12 +21,10 @@ import play.mvc.Result;
 
 import models.Article;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class ArticleController extends Controller {
@@ -43,6 +42,7 @@ public class ArticleController extends Controller {
         for(String category: categories) {
             String dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/extract bbc data/" + category;
             int dir_size = new File(dir).list().length;
+            System.out.println(dir_size);
             String file_num = "";
 
             for(int i = 1; i < dir_size+1; i++) {
@@ -54,21 +54,35 @@ public class ArticleController extends Controller {
                     file_num = "" + i;
                 }
 
-                InputStream stream = new FileInputStream(dir + "/" + file_num + ".txt");
-                String raw_text = IOUtils.readLines(stream, "UTF-8").stream().toString();
-                String content = raw_text.replace("\n", " ").replace("\r", " ");
+                try {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    File myFile = new File(dir + "/" + file_num + ".txt");
+                    Scanner myReader = new Scanner(myFile);
+                    String title = myReader.nextLine();
+                    System.out.println(title);
+                    while (myReader.hasNextLine()) {
+                        String data = myReader.nextLine() + " ";
+                        stringBuilder.append(data);
+                    }
+                    myReader.close();
+                    String content = stringBuilder.toString();
 
-                XContentBuilder builder = XContentFactory.jsonBuilder()
-                        .startObject()
-                        .field("category", category)
-                        .field("content", content)
-                        .endObject();
+                    XContentBuilder builder = XContentFactory.jsonBuilder()
+                            .startObject()
+                            .field("category", category)
+                            .field("title", title)
+                            .field("content", content)
+                    .endObject();
 
-                IndexRequest indexRequest = new IndexRequest("bbc-articles");
-                indexRequest.source(builder);
+                    IndexRequest indexRequest = new IndexRequest("articles-db");
+                    indexRequest.source(builder);
 
-                IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-                System.out.println(response.getResult());
+                    IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+                    System.out.println(response.getResult());
+                } catch (FileNotFoundException e) {
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+                }
             }
         }
         return ok(views.html.articles.populated.render());
@@ -79,27 +93,19 @@ public class ArticleController extends Controller {
                 ClientConfiguration.builder().connectedTo("localhost:9200").build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
 
-        SearchRequest searchRequest = new SearchRequest();
+        QueryBuilder query = QueryBuilders.matchQuery("content", searchTerm);
+        SearchRequest searchRequest = new SearchRequest("articles-db");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(query);
+        searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
+        searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] searchHits = response.getHits().getHits();
         List<Article> results =
                 Arrays.stream(searchHits)
                         .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
                         .collect(Collectors.toList());
-        System.out.println("Results are: " + results );
-        return null;
-        //MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("content", searchTerm);
-        //SearchRequest searchRequest = new SearchRequest("bbc-articles");
-        //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        //searchSourceBuilder.query(matchQueryBuilder);
-        //searchRequest.source(searchSourceBuilder);
-        //SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
-        //SearchHit[] searchHits = response.getHits().getHits();
-        //List<Article> results =
-                //Arrays.stream(searchHits)
-                        //.map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
-                        //.collect(Collectors.toList());
-        //Article article = results.get(1);
-        //return ok(views.html.articles.show.render(article));
+
+        return ok(views.html.results.render(results));
     }
 }
