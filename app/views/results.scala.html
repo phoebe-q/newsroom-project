@@ -1,9 +1,17 @@
-@(searchTerm: String)
+@(results: List[Article])
 <!DOCTYPE html>
 <html>
   <head>
     <title>Results</title>
   </head>
   <h1>Results</h1>
-  <h3>@searchTerm</h3>
+  @for(result <- results) {
+    <head>
+      <title>@result.title</title>
+    </head>
+    <body>
+      <h3>@result.title</h3>
+      <p>@result.content</p>
+    </body>
+  }
 </html>
