@@ -16,7 +16,7 @@
                             <h5 class="card-title">@result.title</h5>
                             <h6 class="card-subtitle mb-2 text-muted">@result.category</h6>
                             <p class="card-text">@result.content</p>
-                            <a href="javascript:clickResult(@result)" class="btn btn-primary">Card link</a>
+                            <a href="javascript:clickResult(@result)" class="btn btn-primary">View Full Article</a>
                         </div>
                     </div>
                 }
@@ -50,9 +50,7 @@
                         console.log(message);
                         switch (message.messagetype) {
                             case "viewResult":
-                                console.log("searching...");
-                                console.log(message.searchTerm);
-                                window.location.href = ("http://localhost:9000/result/" + message.result.category + "/" + message.result.title + "/" + message.result.content);
+                                window.location.href = ("http://localhost:9000/result/" + message.result.title);
                                 //case "populateDB":
                                 //  window.location.href = ("http://localhost:9000/articles/index");
                             default:

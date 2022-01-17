@@ -1,25 +1,24 @@
 package actors;
 
-import akka.actor.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
+import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
+import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import events.EventProcessor;
-import events.Crawl;
 import play.libs.Json;
 import structures.AppState;
 
-public class WebSocketActor extends AbstractActor {
+import java.util.HashMap;
+import java.util.Map;
+
+public class ArticleActor extends AbstractActor {
 
     public static Props props(ActorRef out) {
-        return Props.create(WebSocketActor.class, out);
+        return Props.create(ArticleActor.class, out);
     }
-    private Map<String,EventProcessor> eventProcessors;
+    private Map<String, EventProcessor> eventProcessors;
     private ObjectMapper mapper = new ObjectMapper();
     private AppState appState; // A class that can be used to hold game state information
 
@@ -30,22 +29,13 @@ public class WebSocketActor extends AbstractActor {
      * connection to the front-end is established.
      * @param out
      */
-    public WebSocketActor(ActorRef out) {
+    public ArticleActor(ActorRef out) {
 
         this.out = out;
         eventProcessors = new HashMap<String,EventProcessor>();
 
         // Initalize a new game state object
         appState = new AppState();
-
-        try {
-            System.out.println("try statement in WSA constructor");
-            ObjectNode readyMessage = Json.newObject();
-            readyMessage.put("messagetype", "default");
-            out.tell(readyMessage, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
