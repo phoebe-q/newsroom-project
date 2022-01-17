@@ -17,6 +17,7 @@ import org.elasticsearch.xcontent.XContentFactory;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 import models.Article;
@@ -88,7 +89,7 @@ public class ArticleController extends Controller {
         return ok(views.html.articles.populated.render());
     }
 
-    public Result search(String searchTerm) throws IOException {
+    public Result search(Http.Request request, String searchTerm) throws IOException {
         ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder().connectedTo("localhost:9200").build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
@@ -106,6 +107,10 @@ public class ArticleController extends Controller {
                         .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
                         .collect(Collectors.toList());
 
-        return ok(views.html.results.render(results));
+        return ok(views.html.results.render(request, results));
+    }
+
+    public Result resultView(String category, String title, String content) {
+        return ok(views.html.result.render(category, title, content));
     }
 }

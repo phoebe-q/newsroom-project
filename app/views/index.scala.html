@@ -1,69 +1,79 @@
 @import play.mvc.Http.Request
 @(request: Request)
+@layout("NewsRoom") {
 <!DOCTYPE html>
-  <html>
-      <head>
-          <title>NewsRoom</title>
-          <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap.min.css")">
-          <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap-theme.min.css")">
-          <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/style.css")">
-      </head>
-    <h1>Welcome to NewsRoom!</h1>
-    <h3>Enter search terms related to your topic to begin!</h3>
-    <form>
-      <input id="searchTerm" type="text"/>
-      <button onclick="search()">Search</button>
-    </form>
-    <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
-    <script type="text/javascript">
 
-            let ws;
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+                    <header class="header-wrapper">
+                        <div>
+                            <h3 class="float-md-start mb-0">NewsRoom: A News Consolidation Tool</h3>
+                        </div>
+                    </header>
+                    <main class="px-3">
+                        <h3>Start Searching</h3>
+                        <p class="lead">Just enter the term you want to find out more about and hit search to begin</p>
+                        <p class="lead">
+                        <form>
+                            <input class="form-control" id="searchTerm" type="text"/>
+                            <div class="btn-wrapper">
+                                <a href="javascript:search()" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Search</a>
+                            </div>
+                        </form>
+                        </p>
+                    </main>
+                </div>
 
-            function init() {
-              openWebSocketConnection();
-            }
+        <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
+            <script type="text/javascript">
 
-            function search() {
-                console.log("search clicked");
-                const searchTerm = document.getElementById("searchTerm").value;
-                console.log(searchTerm)
-                ws.send(JSON.stringify({
-                    messagetype: "searchTerm",
-                    searchTerm: searchTerm,
-                }));
-            }
+                    let ws;
 
-            //function populateDB() {
-              //  console.log("populate");
-                //ws.send(JSON.stringify({
-                  //  messagetype: "populateDB",
-                //}));
-            //}
+                    function init() {
+                        openWebSocketConnection();
+                    }
 
-            function openWebSocketConnection() {
-              const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
+                    function search() {
+                        console.log("search clicked");
+                        const searchTerm = document.getElementById("searchTerm").value;
+                        console.log(searchTerm)
+                        ws.send(JSON.stringify({
+                            messagetype: "searchTerm",
+                            searchTerm: searchTerm,
+                        }));
+                    }
 
-              //alert(wsURL);
-              ws = new WebSocket(wsURL);
-              ws.onmessage = function (event) {
-                let message;
-                console.log("message received starting function")
-                message = JSON.parse(event.data);
-                console.log(message);
-                switch (message.messagetype) {
-                  case "searchTerm":
-                      console.log("searching...");
-                      console.log(message.searchTerm);
-                      window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
-                  //case "populateDB":
-                    //  window.location.href = ("http://localhost:9000/articles/index");
-                  default:
-                      console.log("defaulted instead of realising it was url")
-                      return console.log(message);
-                }
-              };
-            }
+                    //function used to populate the DB with ML resources
+                    //function populateDB() {
+                    //  console.log("populate");
+                    //ws.send(JSON.stringify({
+                    //  messagetype: "populateDB",
+                    //}));
+                    //}
 
-    </script>
-    </body>
-  </html>
+                    function openWebSocketConnection() {
+                        const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
+
+                        //alert(wsURL);
+                        ws = new WebSocket(wsURL);
+                        ws.onmessage = function (event) {
+                            let message;
+                            console.log("message received starting function")
+                            message = JSON.parse(event.data);
+                            console.log(message);
+                            switch (message.messagetype) {
+                                case "searchTerm":
+                                    console.log("searching...");
+                                    console.log(message.searchTerm);
+                                    window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
+                                    //case "populateDB":
+                                    //  window.location.href = ("http://localhost:9000/articles/index");
+                                default:
+                                    console.log("defaulted instead of realising it was url")
+                                    return console.log(message);
+                            }
+                        };
+                    }
+
+            </script>
+        </body>
+}

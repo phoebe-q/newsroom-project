@@ -255,6 +255,19 @@
 
 - _1.5 hours_ Worked on implementing Bootstrap: downloaded Bootstrap and JQuery and imported neccessary parts into project.
 
+### 13 Jan 2022
+
+- _3.5 hours_ Worked on implementing Bootstrap: downloaded and implemented theme, made adjustments. Was blocked by theme import issues, but managed to solve in a couple of hours
+
+### 15 Jan 2022
+
+- _3.5 hours_ Worked on implementing Bootstrap: updated to Bootstrap v5 and made changes needed for new version to run, added css to results page
+
+### 16 Jan 2022
+
+- _3.5 hours_ Worked on implementing Bootstrap: fixed some errors, began creating page for single result view. Struggled with implementing pathbindable for lone article
+
+
 ## Week 16
 
 ### 17 Jan 2022

@@ -1,17 +1,67 @@
-@(results: List[Article])
+@import play.mvc.Http.Request
+@(request: Request, results: List[Article])
+@layout("Results") {
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Results</title>
-  </head>
-  <h1>Results</h1>
-  @for(result <- results) {
-    <head>
-      <title>@result.title</title>
-    </head>
-    <body>
-      <h3>@result.title</h3>
-      <p>@result.content</p>
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <header class="header-wrapper results">
+            <div>
+                <h3 class="float-md-start mb-0">Results</h3>
+            </div>
+        </header>
+        <main class="results-body">
+            <div class="cards-wrapper">
+                @for(result <- results) {
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@result.title</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@result.category</h6>
+                            <p class="card-text">@result.content</p>
+                            <a href="javascript:clickResult(@result)" class="btn btn-primary">Card link</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </main>
+    </div>
+    <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
+        <script type="text/javascript">
+
+                let ws;
+
+                function init() {
+                    openWebSocketConnection();
+                }
+
+                function clickResult(result) {
+                    ws.send(JSON.stringify({
+                        messagetype: "viewResult",
+                        result: result,
+                    }));
+                }
+
+                function openWebSocketConnection() {
+                    const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
+
+                    ws = new WebSocket(wsURL);
+                    ws.onmessage = function (event) {
+                        let message;
+                        console.log("message received starting function")
+                        message = JSON.parse(event.data);
+                        console.log(message);
+                        switch (message.messagetype) {
+                            case "viewResult":
+                                console.log("searching...");
+                                console.log(message.searchTerm);
+                                window.location.href = ("http://localhost:9000/result/" + message.result.category + "/" + message.result.title + "/" + message.result.content);
+                                //case "populateDB":
+                                //  window.location.href = ("http://localhost:9000/articles/index");
+                            default:
+                                console.log("defaulted instead of realising it was url")
+                                return console.log(message);
+                        }
+                    };
+                }
+
+        </script>
     </body>
-  }
-</html>
+}
