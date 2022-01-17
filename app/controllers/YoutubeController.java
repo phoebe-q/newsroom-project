@@ -22,20 +22,16 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class YoutubeController extends Controller {
-    private static final String CLIENT_SECRETS= "client_secret.json";
-    private static final Collection<String> SCOPES =
-            Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
-
-    private static final String APPLICATION_NAME = "API code samples";
+    private static final String CLIENT_SECRETS= "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/client_secret.json";
+    private static final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
+    private static final String APPLICATION_NAME = "NewsRoom";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     /**
@@ -46,7 +42,9 @@ public class YoutubeController extends Controller {
      */
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
         // Load client secrets.
-        InputStream in = YoutubeController.class.getResourceAsStream(CLIENT_SECRETS);
+        System.out.println("JSONFACTORY = " + JSON_FACTORY);
+        FileInputStream in = new FileInputStream(new File(CLIENT_SECRETS));
+        //InputStream in = YoutubeController.class.getResourceAsStream(CLIENT_SECRETS);
         GoogleClientSecrets clientSecrets =
                 GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         // Build flow and trigger user authorization request.
@@ -78,8 +76,7 @@ public class YoutubeController extends Controller {
      *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public Result searchYT(String searchTerm)
-            throws GeneralSecurityException, IOException, GoogleJsonResponseException {
+    public Result searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException {
         YouTube youtubeService = getService();
         List<String> snippet = Arrays.asList("snippet");
         List<String> video = Arrays.asList("video");

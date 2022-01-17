@@ -265,12 +265,12 @@
 
 ### 16 Jan 2022
 
-- _3.5 hours_ Worked on implementing Bootstrap: fixed some errors, began creating page for single result view. Struggled with implementing pathbindable for lone article
+- _3.5 hours_  Worked on implementing Bootstrap: fixed some errors, began creating page for single result view. Struggled with implementing pathbindable for lone article
 
 
 ## Week 16
 
 ### 17 Jan 2022
 
-
+- _1 hour_  Worked on implementing Bootstrap: continued to struggle with implementing path binder, will speak to Richard about it and out next meeting tomorrow
 

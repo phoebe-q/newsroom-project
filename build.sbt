@@ -16,6 +16,7 @@ libraryDependencies += "org.elasticsearch.client" % "elasticsearch-rest-high-lev
 libraryDependencies += "org.springframework" % "spring-web" % "5.3.14"
 libraryDependencies += "org.springframework.data" % "spring-data-elasticsearch" % "4.3.0"
 libraryDependencies += "com.alibaba" % "fastjson" % "1.2.79"
+libraryDependencies += "com.google.http-client" % "google-http-client-gson" % "1.41.0"
 
 libraryDependencies ++= Seq(
   javaJdbc

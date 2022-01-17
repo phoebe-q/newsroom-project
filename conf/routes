@@ -12,6 +12,7 @@ GET     /articles                   controllers.ArticleController.index()
 #GET     /articles/index             controllers.ArticleController.indexDB()
 GET     /articles/:searchTerm       controllers.ArticleController.search(request: Request, searchTerm: String)
 
+GET     /video/:searchTerm          controllers.YoutubeController.searchYT(searchTerm: String)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 

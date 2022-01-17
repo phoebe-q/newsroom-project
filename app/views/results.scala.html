@@ -14,9 +14,9 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">@result.title</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@result.category</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">(@result.category).uppercase</h6>
                             <p class="card-text">@result.content</p>
-                            <a href="javascript:clickResult(@result)" class="btn btn-primary">Card link</a>
+                            <a href="javascript:clickResult(@result)" class="btn btn-primary">View Full Article</a>
                         </div>
                     </div>
                 }
