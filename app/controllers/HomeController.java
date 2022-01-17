@@ -39,12 +39,8 @@ public class HomeController extends Controller {
         return ok(views.html.index.render(request));
     }
 
-    public Result resultsView(List<Article> results) {
-        return ok(views.html.results.render(results));
-    }
-
-    public Result eventView(Http.Request request, String eventID) {
-        return ok(views.html.eventView.render(request, eventID));
+    public Result resultsView(Http.Request request, List<Article> results) {
+        return ok(views.html.results.render(request, results));
     }
 
     public WebSocket socket() {

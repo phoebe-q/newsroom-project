@@ -2,29 +2,27 @@
 @(request: Request)
 @layout("NewsRoom") {
 <!DOCTYPE html>
-        <div class="site-wrapper">
-            <div class="site-wrapper-inner">
-                <div class="cover-container">
-                    <div class="masthead clearfix">
-                        <div class="inner">
-                            <h3 class="masthead brand">NewsRoom: A News Consolidation Tool</h3>
+
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+                    <header class="header-wrapper">
+                        <div>
+                            <h3 class="float-md-start mb-0">NewsRoom: A News Consolidation Tool</h3>
                         </div>
-                    </div>
-                    <div class="inner-cover">
-                        <h3 class="cover-heading">Start Searching</h3>
+                    </header>
+                    <main class="px-3">
+                        <h3>Start Searching</h3>
                         <p class="lead">Just enter the term you want to find out more about and hit search to begin</p>
                         <p class="lead">
                         <form>
                             <input class="form-control" id="searchTerm" type="text"/>
                             <div class="btn-wrapper">
-                                <a href="javascript:search()" class="btn btn-lg btn-default">Search</a>
+                                <a href="javascript:search()" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Search</a>
                             </div>
                         </form>
                         </p>
-                    </div>
+                    </main>
                 </div>
-            </div>
-        </div>
+
         <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
             <script type="text/javascript">
 

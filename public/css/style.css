@@ -1,7 +1,36 @@
-
+.header-wrapper {
+    width: 100%;
+    margin-bottom: 30%;
+}
+.header-wrapper.results {
+    margin-bottom: 5%;
+}
 .btn-wrapper {
     padding-top: 10%;
 }
 form{
     display: inline-block;
+}
+
+.results-body {
+    height: 80%;
+    overflow: scroll;
+}
+.card{
+    background-color: #808080;
+    margin-top: 3%;
+}
+cards-wrapper{
+    margin-bottom: 3%;
+}
+.card-text{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+.btn-primary{
+    background-color: #212529; !important;
+    border-color: #212529; !important;
 }
