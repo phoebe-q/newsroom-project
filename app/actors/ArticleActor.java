@@ -42,7 +42,6 @@ public class ArticleActor extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
                 .match(JsonNode.class, message -> {
-                    System.out.println(message);
                     try {
                         ObjectNode readyMessage = Json.newObject();
                         readyMessage.put("messagetype", message.get("messagetype").asText());
@@ -64,7 +63,7 @@ public class ArticleActor extends AbstractActor {
         EventProcessor processor = eventProcessors.get(messageType);
         if (processor==null) {
             // Unknown event type received
-            System.err.println("WebSocketActor: Received unknown event type "+messageType);
+            System.err.println("ArticleActor: Received unknown event type "+messageType);
         } else {
             System.out.println("message type is " + messageType);
             processor.processEvent(out, appState, message); // process the event
