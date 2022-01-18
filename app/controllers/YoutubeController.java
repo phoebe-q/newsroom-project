@@ -42,7 +42,6 @@ public class YoutubeController extends Controller {
      */
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
         // Load client secrets.
-        System.out.println("JSONFACTORY = " + JSON_FACTORY);
         FileInputStream in = new FileInputStream(new File(CLIENT_SECRETS));
         //InputStream in = YoutubeController.class.getResourceAsStream(CLIENT_SECRETS);
         GoogleClientSecrets clientSecrets =

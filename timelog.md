@@ -203,7 +203,7 @@
 ### 3 Jan 2022
 
 - _3 hours_ Continued to try to link E
-- _3 hours_ Attemped to link MySql database with ElasticSearch instance, found this needlessly difficult so decided to populate the ElasticSearch instance rather than trying to link
+- _3 hours_ Attempted to link MySql database with ElasticSearch instance, found this needlessly difficult so decided to populate the ElasticSearch instance rather than trying to link
 
 
 ### 4 Jan 2022
@@ -273,4 +273,6 @@
 ### 17 Jan 2022
 
 - _1 hour_  Worked on implementing Bootstrap: continued to struggle with implementing path binder, will speak to Richard about it and out next meeting tomorrow
+- _2 hours_ Tried to implement youtube search, blocked by waiting on API permissions to update on google developer
+- _1 hour_ Began creating ArticleActor to handle transfer of data between views in project
 
