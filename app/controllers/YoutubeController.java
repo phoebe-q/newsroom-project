@@ -42,6 +42,7 @@ public class YoutubeController extends Controller {
      */
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
         // Load client secrets.
+        System.out.println("scopes = " + SCOPES);
         FileInputStream in = new FileInputStream(new File(CLIENT_SECRETS));
         //InputStream in = YoutubeController.class.getResourceAsStream(CLIENT_SECRETS);
         GoogleClientSecrets clientSecrets =
@@ -51,7 +52,7 @@ public class YoutubeController extends Controller {
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
                         .build();
         Credential credential =
-                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("phoebe.quinn04@gmail.com");
         return credential;
     }
 

@@ -276,3 +276,12 @@
 - _2 hours_ Tried to implement youtube search, blocked by waiting on API permissions to update on google developer
 - _1 hour_ Began creating ArticleActor to handle transfer of data between views in project
 
+### 18 Jan 2022
+
+- _2 hours_  Tried to fix websocket to be able to pass data between views.
+- _0.5 hours_ Met with Richard, he advised I put all the data on one page to avoid having to pass between views, we also discussed topic modelling and sorting of data
+- _1 hour_ Tried to fix Youtube Call - continues to break with a 400 error
+
+### 19 Jan 2022
+
+- _2 hours_ Worked on fixing Youtube Call - I am blocked in this area as I have tried multiple solutions and none of them seem to work
