@@ -1,3 +1,6 @@
+.cover-container{
+    max-width: 60em; !important;
+}
 .header-wrapper {
     width: 100%;
     margin-bottom: 30%;
@@ -12,10 +15,6 @@ form{
     display: inline-block;
 }
 
-.results-body {
-    height: 80%;
-    overflow: scroll;
-}
 .card{
     background-color: #808080;
     margin-top: 3%;
@@ -23,7 +22,7 @@ form{
 cards-wrapper{
     margin-bottom: 3%;
 }
-.card-text{
+.col-10.mb-1.small{
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

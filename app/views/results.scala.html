@@ -8,18 +8,23 @@
                 <h3 class="float-md-start mb-0">Results</h3>
             </div>
         </header>
-        <main class="results-body">
-            <div class="cards-wrapper">
-                @for(result <- results) {
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">@result.title</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@result.category</h6>
-                            <p class="card-text">@result.content</p>
-                            <a href="javascript:clickResult(@result)" class="btn btn-primary">View Full Article</a>
-                        </div>
-                    </div>
-                }
+        <main>
+            <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style="width: 380px;">
+                <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+                    <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+                    <span class="fs-5 fw-semibold">Topics</span>
+                </a>
+                <div class="list-group list-group-flush border-bottom scrollarea">
+                    @for(result <- results) {
+                        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <strong class="mb-1">@result.title</strong>
+                                <small class="text-muted">@result.category</small>
+                            </div>
+                            <div class="col-10 mb-1 small">@result.content</div>
+                        </a>
+                    }
+                </div>
             </div>
         </main>
     </div>
