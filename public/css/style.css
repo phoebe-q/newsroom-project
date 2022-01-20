@@ -19,6 +19,11 @@ form{
     background-color: #808080;
     margin-top: 3%;
 }
+.results-body{
+    height: 60%;
+    overflow: scroll;
+    width: 340px;
+}
 cards-wrapper{
     margin-bottom: 3%;
 }
