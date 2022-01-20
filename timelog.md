@@ -273,16 +273,21 @@
 ### 17 Jan 2022
 
 - _1 hour_  Worked on implementing Bootstrap: continued to struggle with implementing path binder, will speak to Richard about it and out next meeting tomorrow
-- _2 hours_ Tried to implement youtube search, blocked by waiting on API permissions to update on google developer
+- _2 hours_ Tried to implement YouTube search, blocked by waiting on API permissions to update on google developer
 - _1 hour_ Began creating ArticleActor to handle transfer of data between views in project
 
 ### 18 Jan 2022
 
 - _2 hours_  Tried to fix websocket to be able to pass data between views.
 - _0.5 hours_ Met with Richard, he advised I put all the data on one page to avoid having to pass between views, we also discussed topic modelling and sorting of data
-- _1 hour_ Tried to fix Youtube Call - continues to break with a 400 error
+- _1 hour_ Tried to fix YouTube Call - continues to break with a 400 error
 
 ### 19 Jan 2022
 
-- _2 hours_ Worked on fixing Youtube Call - I am blocked in this area as I have tried multiple solutions and none of them seem to work
+- _2 hours_ Worked on fixing YouTube Call - I am blocked in this area as I have tried multiple solutions and none of them seem to work
 - _1 hour_  Started on updates to bootstrap Richard recommended
+
+### 19 Jan 2022
+
+- _3 hours_ Continued working on disappearing navbar, went back and forth for a while. Nearly working
+- _1 hour_ Tried to fix YouTube search - callback now targeting correct port, but same error still occurring 
