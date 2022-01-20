@@ -51,8 +51,9 @@ public class YoutubeController extends Controller {
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
                         .build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8000).build();
         Credential credential =
-                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("phoebe.quinn04@gmail.com");
+                new AuthorizationCodeInstalledApp(flow, receiver).authorize("phoebe.quinn04@gmail.com");
         return credential;
     }
 
@@ -64,6 +65,7 @@ public class YoutubeController extends Controller {
      */
     public static YouTube getService() throws GeneralSecurityException, IOException {
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        System.out.println("httpTransport: " + httpTransport);
         Credential credential = authorize(httpTransport);
         return new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)

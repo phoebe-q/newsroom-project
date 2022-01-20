@@ -285,3 +285,4 @@
 ### 19 Jan 2022
 
 - _2 hours_ Worked on fixing Youtube Call - I am blocked in this area as I have tried multiple solutions and none of them seem to work
+- _1 hour_  Started on updates to bootstrap Richard recommended
