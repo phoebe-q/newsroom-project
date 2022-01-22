@@ -19,11 +19,12 @@ form{
     background-color: #808080;
     margin-top: 3%;
 }
-.results-body{
+/*.results-body{
     height: 60%;
     overflow: scroll;
     width: 340px;
 }
+ */
 cards-wrapper{
     margin-bottom: 3%;
 }
@@ -37,4 +38,31 @@ cards-wrapper{
 .btn-primary{
     background-color: #212529; !important;
     border-color: #212529; !important;
+}
+
+@media (min-width : 992px) {
+    .offcanvas {
+        visibility      : visible;
+        position        : relative;
+        background      : none;
+        border          : none;
+        justify-content : end;
+        color           : red;
+    }
+}
+
+@media (max-width : 992px) {
+    .offcanvas {
+        width : 250px !important;
+    }
+    .offcanvas-start-lg {
+        top          : 0;
+        left         : 0;
+        border-right : 1px solid rgba(0, 0, 0, .2);
+        transform    : translateX(-100%);
+    }
+}
+
+.navbar-nav li a {
+    color: white !important;
 }
