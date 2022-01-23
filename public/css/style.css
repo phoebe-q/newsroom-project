@@ -40,29 +40,29 @@ cards-wrapper{
     border-color: #212529; !important;
 }
 
-@media (min-width : 992px) {
-    .offcanvas {
-        visibility      : visible;
-        position        : relative;
-        background      : none;
-        border          : none;
-        justify-content : end;
-        color           : red;
-    }
+.side-navbar {
+    width: 180px;
+    height: 100%;
+    position: fixed;
+    margin-left: -300px;
+    background-color: #100901;
+    transition: 0.5s;
 }
 
-@media (max-width : 992px) {
-    .offcanvas {
-        width : 250px !important;
-    }
-    .offcanvas-start-lg {
-        top          : 0;
-        left         : 0;
-        border-right : 1px solid rgba(0, 0, 0, .2);
-        transform    : translateX(-100%);
-    }
+.nav-link:active,
+.nav-link:focus,
+.nav-link:hover {
+    background-color: #ffffff26;
 }
 
-.navbar-nav li a {
-    color: white !important;
+.my-container {
+    transition: 0.4s;
+}
+
+.active-nav {
+    margin-left: 0;
+}
+
+active-cont {
+    margin-left: 180px;
 }
