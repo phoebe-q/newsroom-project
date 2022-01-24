@@ -1,6 +1,7 @@
 package controllers;
 
 import com.alibaba.fastjson.JSON;
+import com.google.api.services.youtube.model.*;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -32,22 +33,18 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import models.Article;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class ArticleController extends Controller {
@@ -137,7 +134,7 @@ public class ArticleController extends Controller {
     }
 
     private static final String CLIENT_SECRETS= "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/client_secret.json";
-    private static final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
+    private static final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.force-ssl");
     private static final String APPLICATION_NAME = "NewsRoom";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
@@ -149,7 +146,6 @@ public class ArticleController extends Controller {
      */
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
         // Load client secrets.
-        System.out.println("scopes = " + SCOPES);
         FileInputStream in = new FileInputStream(new File(CLIENT_SECRETS));
         //InputStream in = YoutubeController.class.getResourceAsStream(CLIENT_SECRETS);
         GoogleClientSecrets clientSecrets =
@@ -199,6 +195,40 @@ public class ArticleController extends Controller {
                 .setVideoDimension("2d")
                 .setVideoEmbeddable("true")
                 .execute();
-        System.out.println(response);
+        List<SearchResult> results = response.getItems();
+        int i = 1;
+        for(SearchResult result: results){
+            ResourceId resourceId = result.getId();
+            String videoId = resourceId.getVideoId();
+            System.out.println("video ID: " + videoId);
+            String captionId = getCaptionID(videoId);
+            downloadCaptions(captionId, i);
+            i++;
+        }
+
+    }
+    public String getCaptionID(String id) throws GeneralSecurityException, IOException {
+        YouTube youtubeService = getService();
+        // Define and execute the API request
+        YouTube.Captions.List request = youtubeService.captions()
+                .list(Collections.singletonList("id"), id);
+        CaptionListResponse response = request.execute();
+
+        List<Caption> results = response.getItems();
+        String captionId = results.get(0).getId();
+        System.out.println(captionId);
+        return captionId;
+    }
+    public void downloadCaptions(String id, int i) throws GeneralSecurityException, IOException {
+        YouTube youtubeService = getService();
+
+        OutputStream output = new FileOutputStream("/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube/captions-"+i+".txt" );
+
+        // Define and execute the API request
+        YouTube.Captions.Download request = youtubeService.captions()
+                .download(id);
+        request.getMediaHttpDownloader();
+        request.executeMediaAndDownloadTo(output);
     }
 }
+
