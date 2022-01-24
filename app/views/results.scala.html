@@ -1,5 +1,5 @@
 @import play.mvc.Http.Request
-@(request: Request, results: List[Article])
+@(results: List[Article], topics: ArrayList[ArrayList[String]])
 @layout("Results") {
 <!DOCTYPE html>
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
@@ -14,9 +14,9 @@
                     <a href="#" class="nav-link h5 text-white my-2">
                         Topics
                     </a>
-                    @for(result <- results) {
+                    @for(topic <- topics) {
                         <li href="#" class="nav-link text-white" id="topic">
-                            <span class="mx-2">@result.title</span>
+                            <span class="mx-2">@topic.get(0)</span>
                         </li>
                     }
                 </ul>

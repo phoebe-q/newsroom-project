@@ -5,7 +5,7 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index(request: Request)
 GET     /ws                         controllers.HomeController.socket()
-GET     /resultsView                controllers.HomeController.resultsView(request: Request, results: java.util.List[models.Article])
+#GET     /resultsView                controllers.HomeController.resultsView(results: java.util.List[models.Article], topicsList: java.util.ArrayList)
 
 GET     /result/:category/:title/:content       controllers.ArticleController.resultView(category: String, title: String, content: String)
 GET     /articles                   controllers.ArticleController.index()
