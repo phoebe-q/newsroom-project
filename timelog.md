@@ -287,7 +287,21 @@
 - _2 hours_ Worked on fixing YouTube Call - I am blocked in this area as I have tried multiple solutions and none of them seem to work
 - _1 hour_  Started on updates to bootstrap Richard recommended
 
-### 19 Jan 2022
+### 20 Jan 2022
 
 - _3 hours_ Continued working on disappearing navbar, went back and forth for a while. Nearly working
 - _1 hour_ Tried to fix YouTube search - callback now targeting correct port, but same error still occurring 
+
+### 22 Jan 2022
+
+- _1 hour_ Began with mallet, downloaded the package and unpacked. Read docs so I was prepared for the next day.
+
+### 23 Jan 2022
+
+- _3 hours_ Got mallet topic modelling linked into project code and working, returns 5 topics for each search
+- _1 hour_  Fixed css side menu - now hides to the side on click
+- _1.5 hours_ fed topics into results page
+
+### 24 Jan 2022
+
+- _2 hours_ Fixed YouTube search, beginning now to pull out subtitles to pass to view
