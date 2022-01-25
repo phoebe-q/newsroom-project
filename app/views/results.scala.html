@@ -17,7 +17,9 @@
                     @for(topic <- topics) {
                         @if(!topic.isEmpty()) {
                             <li href="#" class="nav-link text-white" id="topic">
-                                <span class="mx-2">@topic.get(0)</span>
+                                @for(entry <- topic) {
+                                    <span class="mx-2">@entry</span>
+                                }
                             </li>
                         }
                     }

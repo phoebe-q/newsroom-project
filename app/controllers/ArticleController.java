@@ -217,7 +217,7 @@ public class ArticleController extends Controller {
                 rank++;
             }
             topicsList.add(topicWords);
-            System.out.println(topicsList);
+            //System.out.println(topicsList);
         }
 
         // Create a new instance with high probability of topic 0
