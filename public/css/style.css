@@ -1,3 +1,6 @@
+/* INDEX PAGE
+*/
+
 .cover-container{
     max-width: 60em; !important;
 }
@@ -5,26 +8,25 @@
     width: 100%;
     margin-bottom: 30%;
 }
-.header-wrapper.results {
-    margin-bottom: 5%;
-}
 .btn-wrapper {
     padding-top: 10%;
 }
 form{
     display: inline-block;
 }
+.spinner-container{
+    padding-top: 5%;
+}
 
+/* RESULTS PAGE
+*/
+.header-wrapper.results {
+    margin-bottom: 5%;
+}
 .card{
     background-color: #808080;
     margin-top: 3%;
 }
-/*.results-body{
-    height: 60%;
-    overflow: scroll;
-    width: 340px;
-}
- */
 cards-wrapper{
     margin-bottom: 3%;
 }

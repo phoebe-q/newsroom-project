@@ -18,6 +18,11 @@
                             <div class="btn-wrapper">
                                 <a href="javascript:search()" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Search</a>
                             </div>
+                            <div class="spinner-container">
+                                <div class="d-none spinner-border text-info" role="status" id="spinner">
+                                    <span class="sr-only"></span>
+                                </div>
+                            </div>
                         </form>
                         </p>
                     </main>
@@ -33,6 +38,10 @@
                     }
 
                     function search() {
+                        const spinner = document.querySelector("#spinner");
+
+                        spinner.classList.toggle("d-none");
+
                         console.log("search clicked");
                         const searchTerm = document.getElementById("searchTerm").value;
                         console.log(searchTerm)
