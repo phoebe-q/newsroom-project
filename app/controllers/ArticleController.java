@@ -71,10 +71,10 @@ public class ArticleController extends Controller {
                     Scanner myReader = new Scanner(myFile);
                     String title = myReader.nextLine();
                     System.out.println(title);
-                    while (myReader.hasNextLine()) {
-                        String data = myReader.nextLine() + " ";
-                        stringBuilder.append(data);
-                    }
+                    //while (myReader.hasNextLine()) {
+                      //  String data = myReader.nextLine() + " ";
+                      //  stringBuilder.append(data);
+                    //}
                     myReader.close();
                     String content = stringBuilder.toString();
 
