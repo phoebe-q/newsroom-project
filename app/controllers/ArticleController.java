@@ -2,6 +2,10 @@ package controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.google.api.services.youtube.model.*;
+import com.sapher.youtubedl.YoutubeDL;
+import com.sapher.youtubedl.YoutubeDLException;
+import com.sapher.youtubedl.YoutubeDLRequest;
+import com.sapher.youtubedl.YoutubeDLResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -37,6 +41,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
@@ -108,7 +114,7 @@ public class ArticleController extends Controller {
         return ok(views.html.articles.populated.render());
     }
 
-    public Result search(Http.Request request, String searchTerm) throws IOException, GeneralSecurityException {
+    public Result search(Http.Request request, String searchTerm) throws IOException, GeneralSecurityException, YoutubeDLException {
         ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder().connectedTo("localhost:9200").build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
@@ -125,6 +131,7 @@ public class ArticleController extends Controller {
                 Arrays.stream(searchHits)
                         .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
                         .collect(Collectors.toList());
+
         searchYT(searchTerm);
         return ok(views.html.results.render(request, results));
     }
@@ -153,6 +160,7 @@ public class ArticleController extends Controller {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                        .setAccessType("offline")
                         .build();
         Credential credential =
                 new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("phoebe.quinn04@gmail.com");
@@ -180,7 +188,7 @@ public class ArticleController extends Controller {
      *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public void searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException {
+    public void searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
         YouTube youtubeService = getService();
         List<String> snippet = Arrays.asList("id,snippet");
         List<String> video = Arrays.asList("video");
@@ -188,7 +196,7 @@ public class ArticleController extends Controller {
         YouTube.Search.List request = youtubeService.search()
                 .list(snippet);
         SearchListResponse response = request.setChannelId("UC16niRr50-MSBwiO3YDb3RA") //channel id for BBCNews
-                .setMaxResults(25L)
+                .setMaxResults(5L)
                 .setQ(searchTerm)
                 .setType(video)
                 .setVideoCaption("closedCaption")
@@ -201,8 +209,8 @@ public class ArticleController extends Controller {
             ResourceId resourceId = result.getId();
             String videoId = resourceId.getVideoId();
             System.out.println("video ID: " + videoId);
-            String captionId = getCaptionID(videoId);
-            downloadCaptions(captionId, i);
+
+            downloadCaptions(videoId, i);
             i++;
         }
 
@@ -219,16 +227,30 @@ public class ArticleController extends Controller {
         System.out.println(captionId);
         return captionId;
     }
-    public void downloadCaptions(String id, int i) throws GeneralSecurityException, IOException {
-        YouTube youtubeService = getService();
 
-        OutputStream output = new FileOutputStream("/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube/captions-"+i+".txt" );
+    public void downloadCaptions(String id, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
+        // Video url to download
+        String videoUrl = "https://www.youtube.com/watch?v=" + id;
 
-        // Define and execute the API request
-        YouTube.Captions.Download request = youtubeService.captions()
-                .download(id);
-        request.getMediaHttpDownloader();
-        request.executeMediaAndDownloadTo(output);
+        // Destination directory
+        String directory = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube/";
+
+        YoutubeDL.setExecutablePath("/usr/local/Cellar/youtube-dl/2021.12.17/libexec/bin/youtube-dl");
+        // Build request
+        YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
+        request.setOption("write-sub");		// --write-sub
+        request.setOption("skip-download");	// --skip-download
+        request.setOption("sub-lang", "en"); // --sub-lang en
+        request.setOption("output", "%(title)s-%(id)s.%(ext)s"); // --output specifies file to output subs to
+
+        // Make request and return response
+        YoutubeDLResponse response = YoutubeDL.execute(request);
+
+        // Response
+        String stdOut = response.getOut(); // Executable output
+
+        System.out.println("stdOut" + stdOut);
+
     }
 }
 

@@ -305,3 +305,20 @@
 ### 24 Jan 2022
 
 - _2 hours_ Fixed YouTube search, beginning now to pull out subtitles to pass to view
+
+## Week 17
+
+### 25 Jan 2022
+
+- _4 hours_ Fixed YouTube Search, Caption download presented some issues however, seems that I may need to find a work-around as it may not be possible to download captions using api
+- _1 hour_ Updated topic sidebar to include all topics
+
+### 26 Jan 2022
+
+- _1 hour_ read up about similarity sorting contents by topic
+- _1 hour_ implemented spinner to visualise loading on index page
+- _0.5 hours_ Fixed bug in sidebar to make click of any item in menu hide it.
+
+### 27 Jan 2022
+
+- _3 hours_ Tried to implement Subtitles work around, however GET requests returns nothing - think this method has deprecated
