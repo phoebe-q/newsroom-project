@@ -6,6 +6,7 @@ import com.sapher.youtubedl.YoutubeDL;
 import com.sapher.youtubedl.YoutubeDLException;
 import com.sapher.youtubedl.YoutubeDLRequest;
 import com.sapher.youtubedl.YoutubeDLResponse;
+import org.apache.commons.io.FileUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -213,7 +214,7 @@ public class ArticleController extends Controller {
             downloadCaptions(videoId, i);
             i++;
         }
-
+        parseVtt();
     }
     public String getCaptionID(String id) throws GeneralSecurityException, IOException {
         YouTube youtubeService = getService();
@@ -238,19 +239,50 @@ public class ArticleController extends Controller {
         YoutubeDL.setExecutablePath("/usr/local/Cellar/youtube-dl/2021.12.17/libexec/bin/youtube-dl");
         // Build request
         YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
-        request.setOption("write-sub");		// --write-sub
+        request.setOption("all-subs");		// --write-sub
         request.setOption("skip-download");	// --skip-download
         request.setOption("sub-lang", "en"); // --sub-lang en
-        request.setOption("output", "%(title)s-%(id)s.%(ext)s"); // --output specifies file to output subs to
+        request.setOption("output", ""+i); // --output specifies file to output subs to
 
         // Make request and return response
         YoutubeDLResponse response = YoutubeDL.execute(request);
 
         // Response
         String stdOut = response.getOut(); // Executable output
-
         System.out.println("stdOut" + stdOut);
 
+    }
+
+    public void parseVtt() throws IOException {
+        String vtt_dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube";
+        int dir_size = new File(vtt_dir).list().length;
+
+        if (dir_size > 0) {
+            for (int i = 1; i < dir_size + 1; i++) {
+                StringBuilder stringBuilder = new StringBuilder();
+                File subFile = new File(vtt_dir + "/" + i + ".en.vtt");
+                if(!subFile.exists()) {
+                    subFile = new File(vtt_dir + "/" + i + ".en-GB.vtt");
+                }
+                if (subFile.exists()) {
+                    Scanner r = new Scanner(subFile);
+                    for (int i2 = 0; i2 < 3; i2++) {
+                        r.nextLine();
+                    }
+                    while (r.hasNextLine()) {
+                        String data = r.nextLine() + " ";
+                        if (!data.matches("^([0-9]+\n|)([0-9:,->\s]+)")) {
+                            stringBuilder.append(data);
+                        }
+                    }
+                    r.close();
+                    String subtitlesText = stringBuilder.toString();
+
+                    System.out.println("subtext = " + subtitlesText);
+                }
+            }
+        }
+        FileUtils.cleanDirectory(new File(vtt_dir));
     }
 }
 
