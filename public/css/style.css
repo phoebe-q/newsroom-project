@@ -1,9 +1,12 @@
+/* INDEX PAGE
+*/
+
+.cover-container{
+    max-width: 60em; !important;
+}
 .header-wrapper {
     width: 100%;
     margin-bottom: 30%;
-}
-.header-wrapper.results {
-    margin-bottom: 5%;
 }
 .btn-wrapper {
     padding-top: 10%;
@@ -11,10 +14,14 @@
 form{
     display: inline-block;
 }
+.spinner-container{
+    padding-top: 5%;
+}
 
-.results-body {
-    height: 80%;
-    overflow: scroll;
+/* RESULTS PAGE
+*/
+.header-wrapper.results {
+    margin-bottom: 5%;
 }
 .card{
     background-color: #808080;
@@ -23,7 +30,7 @@ form{
 cards-wrapper{
     margin-bottom: 3%;
 }
-.card-text{
+.col-10.mb-1.small{
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -33,4 +40,31 @@ cards-wrapper{
 .btn-primary{
     background-color: #212529; !important;
     border-color: #212529; !important;
+}
+
+.side-navbar {
+    width: 180px;
+    height: 100%;
+    position: fixed;
+    margin-left: -300px;
+    background-color: #100901;
+    transition: 0.5s;
+}
+
+.nav-link:active,
+.nav-link:focus,
+.nav-link:hover {
+    background-color: #ffffff26;
+}
+
+.my-container {
+    transition: 0.4s;
+}
+
+.active-nav {
+    margin-left: 0;
+}
+
+active-cont {
+    margin-left: 180px;
 }

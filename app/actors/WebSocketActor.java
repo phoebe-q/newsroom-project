@@ -34,7 +34,6 @@ public class WebSocketActor extends AbstractActor {
 
         this.out = out;
         eventProcessors = new HashMap<String,EventProcessor>();
-        eventProcessors.put("url", new Crawl());
 
         // Initalize a new game state object
         appState = new AppState();
@@ -75,7 +74,7 @@ public class WebSocketActor extends AbstractActor {
         EventProcessor processor = eventProcessors.get(messageType);
         if (processor==null) {
             // Unknown event type received
-            System.err.println("WebSocketActor: Recieved unknown event type "+messageType);
+            System.err.println("WebSocketActor: Received unknown event type "+messageType);
         } else {
             System.out.println("message type is " + messageType);
             processor.processEvent(out, appState, message); // process the event
