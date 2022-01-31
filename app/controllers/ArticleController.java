@@ -156,7 +156,7 @@ public class ArticleController extends Controller {
             }
         }
 
-        topicModel(pathToFile);
+        ArrayList<ArrayList<String>> topicsList = topicModel(pathToFile);
 
         File searchResultsFile = new File(pathToFile);
         if (searchResultsFile.delete()) {
@@ -165,7 +165,7 @@ public class ArticleController extends Controller {
             System.out.println("Failed to delete the file.");
         }
 
-        return ok(views.html.results.render(request, results));
+        return ok(views.html.results.render(results, topicsList));
     }
 
     public Result resultView(String category, String title, String content) {
@@ -316,7 +316,7 @@ public class ArticleController extends Controller {
         FileUtils.cleanDirectory(new File(vtt_dir));
     }
 
-    public void topicModel(String pathToFile) throws Exception {
+   public ArrayList<ArrayList<String>> topicModel(String pathToFile) throws Exception {
 
         // Begin by importing documents from text to feature sequences
         ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
@@ -362,7 +362,7 @@ public class ArticleController extends Controller {
         for (int position = 0; position < tokens.getLength(); position++) {
             out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)), topics.getIndexAtPosition(position));
         }
-        System.out.println("first out print:" + out);
+        //System.out.println("first out print:" + out);
 
         // Estimate the topic distribution of the first instance,
         //  given the current Gibbs state.
@@ -371,19 +371,22 @@ public class ArticleController extends Controller {
         // Get an array of sorted sets of word ID/count pairs
         ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 
+        ArrayList<ArrayList<String>> topicsList = new ArrayList<>();
         // Show top 5 words in topics with proportions for the first document
         for (int topic = 0; topic < numTopics; topic++) {
             Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
-
-            out = new Formatter(new StringBuilder(), Locale.US);
-            out.format("%d\t%.3f\t", topic, topicDistribution[topic]);
+            ArrayList<String> topicWords = new ArrayList<>();
+            //out = new Formatter(new StringBuilder(), Locale.US);
+            //out.format("%d\t%.3f\t", topic, topicDistribution[topic]);
             int rank = 0;
             while (iterator.hasNext() && rank < 5) {
                 IDSorter idCountPair = iterator.next();
-                out.format("%s (%.0f) ", dataAlphabet.lookupObject(idCountPair.getID()), idCountPair.getWeight());
+                topicWords.add((dataAlphabet.lookupObject(idCountPair.getID())).toString());
+                //out.format("%s (%.0f) ", dataAlphabet.lookupObject(idCountPair.getID()), idCountPair.getWeight());
                 rank++;
             }
-            System.out.println("second out print:" + out);
+            topicsList.add(topicWords);
+            //System.out.println(topicsList);
         }
 
         // Create a new instance with high probability of topic 0
@@ -403,7 +406,9 @@ public class ArticleController extends Controller {
 
         TopicInferencer inferencer = model.getInferencer();
         double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);
-        System.out.println("0\t" + testProbabilities[0]);
+        //System.out.println("0\t" + testProbabilities[0]);
+
+        return topicsList;
     }
 }
 
