@@ -203,7 +203,7 @@
 ### 3 Jan 2022
 
 - _3 hours_ Continued to try to link E
-- _3 hours_ Attemped to link MySql database with ElasticSearch instance, found this needlessly difficult so decided to populate the ElasticSearch instance rather than trying to link
+- _3 hours_ Attempted to link MySql database with ElasticSearch instance, found this needlessly difficult so decided to populate the ElasticSearch instance rather than trying to link
 
 
 ### 4 Jan 2022
@@ -265,12 +265,60 @@
 
 ### 16 Jan 2022
 
-- _3.5 hours_ Worked on implementing Bootstrap: fixed some errors, began creating page for single result view. Struggled with implementing pathbindable for lone article
+- _3.5 hours_  Worked on implementing Bootstrap: fixed some errors, began creating page for single result view. Struggled with implementing pathbindable for lone article
 
 
 ## Week 16
 
 ### 17 Jan 2022
 
+- _1 hour_  Worked on implementing Bootstrap: continued to struggle with implementing path binder, will speak to Richard about it and out next meeting tomorrow
+- _2 hours_ Tried to implement YouTube search, blocked by waiting on API permissions to update on google developer
+- _1 hour_ Began creating ArticleActor to handle transfer of data between views in project
 
+### 18 Jan 2022
 
+- _2 hours_  Tried to fix websocket to be able to pass data between views.
+- _0.5 hours_ Met with Richard, he advised I put all the data on one page to avoid having to pass between views, we also discussed topic modelling and sorting of data
+- _1 hour_ Tried to fix YouTube Call - continues to break with a 400 error
+
+### 19 Jan 2022
+
+- _2 hours_ Worked on fixing YouTube Call - I am blocked in this area as I have tried multiple solutions and none of them seem to work
+- _1 hour_  Started on updates to bootstrap Richard recommended
+
+### 20 Jan 2022
+
+- _3 hours_ Continued working on disappearing navbar, went back and forth for a while. Nearly working
+- _1 hour_ Tried to fix YouTube search - callback now targeting correct port, but same error still occurring 
+
+### 22 Jan 2022
+
+- _1 hour_ Began with mallet, downloaded the package and unpacked. Read docs so I was prepared for the next day.
+
+### 23 Jan 2022
+
+- _3 hours_ Got mallet topic modelling linked into project code and working, returns 5 topics for each search
+- _1 hour_  Fixed css side menu - now hides to the side on click
+- _1.5 hours_ fed topics into results page
+
+### 24 Jan 2022
+
+- _2 hours_ Fixed YouTube search, beginning now to pull out subtitles to pass to view
+
+## Week 17
+
+### 25 Jan 2022
+
+- _4 hours_ Fixed YouTube Search, Caption download presented some issues however, seems that I may need to find a work-around as it may not be possible to download captions using api
+- _1 hour_ Updated topic sidebar to include all topics
+
+### 26 Jan 2022
+
+- _1 hour_ read up about similarity sorting contents by topic
+- _1 hour_ implemented spinner to visualise loading on index page
+- _0.5 hours_ Fixed bug in sidebar to make click of any item in menu hide it.
+
+### 27 Jan 2022
+
+- _3 hours_ Tried to implement Subtitles work around, however GET requests returns nothing - think this method has deprecated

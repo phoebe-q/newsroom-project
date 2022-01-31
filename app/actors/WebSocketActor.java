@@ -56,7 +56,7 @@ public class WebSocketActor extends AbstractActor {
                     try {
                         ObjectNode readyMessage = Json.newObject();
                         readyMessage.put("messagetype", message.get("messagetype").asText());
-                        if(message.get("messagetype").asText().equals("searchTerm")) {
+                        if(message.get("messagetype").asText().equals("searchTerm") || message.get("messagetype").asText().equals("yt-searchTerm")) {
                             readyMessage.put("searchTerm", message.get("searchTerm").asText());
                         } else if (message.get("messagetype").asText().equals("viewResult")){
                             readyMessage.put("result", message.get("result"));

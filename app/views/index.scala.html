@@ -51,6 +51,16 @@
                         }));
                     }
 
+                    function searchYT() {
+                        console.log("search clicked");
+                        const searchTerm = document.getElementById("searchTerm").value;
+                        console.log(searchTerm)
+                        ws.send(JSON.stringify({
+                            messagetype: "yt-searchTerm",
+                            searchTerm: searchTerm,
+                        }));
+                    }
+
                     //function used to populate the DB with ML resources
                     //function populateDB() {
                     //  console.log("populate");
@@ -70,12 +80,15 @@
                             message = JSON.parse(event.data);
                             console.log(message);
                             switch (message.messagetype) {
+                                case "yt-searchTerm":
+                                    window.location.href = ("http://localhost:9000/video/" + message.searchTerm);
                                 case "searchTerm":
                                     console.log("searching...");
                                     console.log(message.searchTerm);
                                     window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
                                     //case "populateDB":
                                     //  window.location.href = ("http://localhost:9000/articles/index");
+
                                 default:
                                     console.log("defaulted instead of realising it was url")
                                     return console.log(message);
