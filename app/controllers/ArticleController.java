@@ -292,7 +292,7 @@ public class ArticleController extends Controller {
             for (int i = 1; i < dir_size + 1; i++) {
                 StringBuilder stringBuilder = new StringBuilder();
                 File subFile = new File(vtt_dir + "/" + i + ".en.vtt");
-                if(!subFile.exists()) {
+                if (!subFile.exists()) {
                     subFile = new File(vtt_dir + "/" + i + ".en-GB.vtt");
                 }
                 if (subFile.exists()) {
@@ -314,6 +314,7 @@ public class ArticleController extends Controller {
             }
         }
         FileUtils.cleanDirectory(new File(vtt_dir));
+    }
 
     public void topicModel(String pathToFile) throws Exception {
 
