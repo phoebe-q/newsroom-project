@@ -1,6 +1,9 @@
 package controllers;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import models.WPArticle;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -44,13 +47,43 @@ public class ArticleController extends Controller {
 
     public Result indexDB() throws IOException {
         ClientConfiguration clientConfiguration =
-                ClientConfiguration.builder().connectedTo("localhost:9200").build();
+                ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(6000000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
+        BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
+        ObjectMapper objectMapper = new ObjectMapper();
 
 
-        List<String> categories = Arrays.asList("business", "entertainment", "politics", "tech");
+        while ((reader.readLine()) != null) {
+            try {
+                String line = reader.readLine();
+                //JsonNode inputJSON = objectMapper.readTree(line);
+                WPArticle article = objectMapper.readValue(line, WPArticle.class);
 
-        for(String category: categories) {
+                XContentBuilder builder = XContentFactory.jsonBuilder()
+                        .startObject()
+                        .field("id", article.getId())
+                        .field("article_url", article.getArticleURL())
+                        .field("title", article.getTitle())
+                        .field("author", article.getAuthor())
+                        .field("published_date", article.getPublishedDate())
+                        .field("contents", article.getContents())
+                        .field("type", article.getType())
+                        .field("source", article.getSource())
+                        .endObject();
+
+                IndexRequest indexRequest = new IndexRequest("wj-articles");
+                indexRequest.source(builder);
+
+                IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+                System.out.println(response.getResult());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // List<String> categories = Arrays.asList("business", "entertainment", "politics", "tech");
+
+        /* for(String category: categories) {
             String dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/extract bbc data/" + category;
             int dir_size = new File(dir).list().length;
             System.out.println(dir_size);
@@ -96,31 +129,33 @@ public class ArticleController extends Controller {
                 }
             }
         }
+         */
         return ok(views.html.articles.populated.render());
     }
 
-    public Result search(Http.Request request, String searchTerm) throws Exception {
+    public Result search(String searchTerm) throws Exception {
         ClientConfiguration clientConfiguration =
-                ClientConfiguration.builder().connectedTo("localhost:9200").build();
+                ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(600000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
 
-        QueryBuilder query = QueryBuilders.matchQuery("content", searchTerm);
-        SearchRequest searchRequest = new SearchRequest("articles-db");
+        QueryBuilder query = QueryBuilders.matchQuery("title", searchTerm);
+        SearchRequest searchRequest = new SearchRequest("wj-articles");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] searchHits = response.getHits().getHits();
-        List<Article> results =
+        List<WPArticle> results =
                 Arrays.stream(searchHits)
-                        .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
+                        .map(hit -> JSON.parseObject(hit.getSourceAsString(), WPArticle.class))
                         .collect(Collectors.toList());
 
         String pathToFile = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/searchResults.txt";
 
-        for (Article result: results) {
-            try {
+        for (WPArticle result: results) {
+            System.out.println("result is " + result);
+           /* try {
                 FileWriter myWriter = new FileWriter(pathToFile);
                 myWriter.write(result.title + "\t" + result.category + "\t" + result.content + "\n");
                 myWriter.close();
@@ -129,18 +164,23 @@ public class ArticleController extends Controller {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
             }
+
+            */
         }
+        return null;
 
-        topicModel(pathToFile);
+        //topicModel(pathToFile);
 
-        File searchResultsFile = new File(pathToFile);
+       /* File searchResultsFile = new File(pathToFile);
         if (searchResultsFile.delete()) {
             System.out.println("Deleted the file: " + searchResultsFile.getName());
         } else {
             System.out.println("Failed to delete the file.");
         }
 
-        return ok(views.html.results.render(request, results));
+        */
+
+       // return ok(views.html.results.render(request, results));
     }
 
     public Result resultView(String category, String title, String content) {
