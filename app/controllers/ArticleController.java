@@ -140,7 +140,7 @@ public class ArticleController extends Controller {
                         .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
                         .collect(Collectors.toList());
 
-        searchYT(searchTerm);
+        List<String> captions = searchYT(searchTerm);
 
         String pathToFile = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/searchResults.txt";
 
@@ -148,6 +148,18 @@ public class ArticleController extends Controller {
             try {
                 FileWriter myWriter = new FileWriter(pathToFile);
                 myWriter.write(result.title + "\t" + result.category + "\t" + result.content + "\n");
+                myWriter.close();
+                System.out.println("Successfully wrote to the file.");
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+        }
+
+        for (String caption: captions) {
+            try {
+                FileWriter myWriter = new FileWriter(pathToFile);
+                myWriter.write("caption\tnews\t" + caption + "\n");
                 myWriter.close();
                 System.out.println("Successfully wrote to the file.");
             } catch (IOException e) {
@@ -192,7 +204,6 @@ public class ArticleController extends Controller {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-                        .setAccessType("offline")
                         .build();
         Credential credential =
                 new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("phoebe.quinn04@gmail.com");
@@ -220,10 +231,11 @@ public class ArticleController extends Controller {
      *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public void searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
+    public List<String> searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
         YouTube youtubeService = getService();
         List<String> snippet = Arrays.asList("id,snippet");
         List<String> video = Arrays.asList("video");
+
         // Define and execute the API request
         YouTube.Search.List request = youtubeService.search()
                 .list(snippet);
@@ -236,28 +248,17 @@ public class ArticleController extends Controller {
                 .setVideoEmbeddable("true")
                 .execute();
         List<SearchResult> results = response.getItems();
+
         int i = 1;
         for(SearchResult result: results){
             ResourceId resourceId = result.getId();
             String videoId = resourceId.getVideoId();
-            System.out.println("video ID: " + videoId);
 
             downloadCaptions(videoId, i);
             i++;
         }
-        parseVtt();
-    }
-    public String getCaptionID(String id) throws GeneralSecurityException, IOException {
-        YouTube youtubeService = getService();
-        // Define and execute the API request
-        YouTube.Captions.List request = youtubeService.captions()
-                .list(Collections.singletonList("id"), id);
-        CaptionListResponse response = request.execute();
-
-        List<Caption> results = response.getItems();
-        String captionId = results.get(0).getId();
-        System.out.println(captionId);
-        return captionId;
+        List<String> captionsList = parseVtt();
+        return captionsList;
     }
 
     public void downloadCaptions(String id, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
@@ -284,9 +285,10 @@ public class ArticleController extends Controller {
 
     }
 
-    public void parseVtt() throws IOException {
+    public List<String> parseVtt() throws IOException {
         String vtt_dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube";
         int dir_size = new File(vtt_dir).list().length;
+        List<String> captionsList = new ArrayList<>();
 
         if (dir_size > 0) {
             for (int i = 1; i < dir_size + 1; i++) {
@@ -309,11 +311,12 @@ public class ArticleController extends Controller {
                     r.close();
                     String subtitlesText = stringBuilder.toString();
 
-                    System.out.println("subtext = " + subtitlesText);
+                    captionsList.add(subtitlesText);
                 }
             }
         }
         FileUtils.cleanDirectory(new File(vtt_dir));
+        return captionsList;
     }
 
    public ArrayList<ArrayList<String>> topicModel(String pathToFile) throws Exception {
@@ -333,7 +336,7 @@ public class ArticleController extends Controller {
         instances.addThruPipe(new CsvIterator (fileReader, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"),
                 3, 2, 1)); // data, label, name fields
 
-        // Create a model with 100 topics, alpha_t = 0.01, beta_w = 0.01
+        // Create a model with 5 topics, alpha_t = 0.01, beta_w = 0.01
         //  Note that the first parameter is passed as the sum over topics, while
         //  the second is the parameter for a single dimension of the Dirichlet prior.
         int numTopics = 5;
