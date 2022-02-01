@@ -52,7 +52,7 @@ public class ArticleController extends Controller {
         BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
         ObjectMapper objectMapper = new ObjectMapper();
 
-
+        IndexRequest indexRequest = new IndexRequest("wj-articles");
         while ((reader.readLine()) != null) {
             try {
                 String line = reader.readLine();
@@ -71,7 +71,7 @@ public class ArticleController extends Controller {
                         .field("source", article.getSource())
                         .endObject();
 
-                IndexRequest indexRequest = new IndexRequest("wj-articles");
+
                 indexRequest.source(builder);
 
                 IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
