@@ -142,47 +142,29 @@ public class ArticleController extends Controller {
 
         List<String> captions = searchYT(searchTerm);
 
-        String pathToFile = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/searchResults.txt";
-
+        List<String> topicModellingText = new ArrayList<>();
         for (Article result: results) {
-            try {
-                FileWriter myWriter = new FileWriter(pathToFile);
-                myWriter.write(result.title + "\t" + result.category + "\t" + result.content + "\n");
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
+            topicModellingText.add(result.content);
         }
+        topicModellingText.addAll(captions);
+        ArrayList<ArrayList<String>> topicsListAll = topicModel(topicModellingText);
 
-        for (String caption: captions) {
-            try {
-                FileWriter myWriter = new FileWriter(pathToFile);
-                myWriter.write("caption\tnews\t" + caption + "\n");
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
+        ArrayList<ArrayList<String>> topicsList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            topicsList.add(topicsListAll.get(i));
         }
+        ArrayList<String> topic1 = topicsListAll.get(3);
+        ArrayList<String> topic2 = topicsListAll.get(4);
+        ArrayList<String> topic3 = topicsListAll.get(5);
+        ArrayList<String> topic4 = topicsListAll.get(6);
+        ArrayList<String> topic5 = topicsListAll.get(7);
 
-        ArrayList<ArrayList<String>> topicsList = topicModel(pathToFile);
-
-        File searchResultsFile = new File(pathToFile);
-        if (searchResultsFile.delete()) {
-            System.out.println("Deleted the file: " + searchResultsFile.getName());
-        } else {
-            System.out.println("Failed to delete the file.");
-        }
-
-        return ok(views.html.results.render(results, topicsList));
+        return ok(views.html.results.render(results, topicsList, topic1, topic2, topic3, topic4, topic5));
     }
 
-    public Result resultView(String category, String title, String content) {
-        return ok(views.html.result.render(category, title, content));
-    }
+    // public Result resultView(String category, String title, String content) {
+       // return ok(views.html.result.render(category, title, content));
+    // }
 
     private static final String CLIENT_SECRETS= "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/client_secret.json";
     private static final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.force-ssl");
@@ -264,11 +246,10 @@ public class ArticleController extends Controller {
     public void downloadCaptions(String id, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
         // Video url to download
         String videoUrl = "https://www.youtube.com/watch?v=" + id;
-
         // Destination directory
         String directory = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube/";
-
         YoutubeDL.setExecutablePath("/usr/local/Cellar/youtube-dl/2021.12.17/libexec/bin/youtube-dl");
+
         // Build request
         YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
         request.setOption("all-subs");		// --write-sub
@@ -319,10 +300,10 @@ public class ArticleController extends Controller {
         return captionsList;
     }
 
-   public ArrayList<ArrayList<String>> topicModel(String pathToFile) throws Exception {
+   public ArrayList<ArrayList<String>> topicModel(List<String> textList) throws Exception {
 
         // Begin by importing documents from text to feature sequences
-        ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
+        ArrayList<Pipe> pipeList = new ArrayList<>();
 
         // Pipes: lowercase, tokenize, remove stopwords, map to features
         pipeList.add( new CharSequenceLowercase() );
@@ -331,10 +312,7 @@ public class ArticleController extends Controller {
         pipeList.add( new TokenSequence2FeatureSequence() );
 
         InstanceList instances = new InstanceList (new SerialPipes(pipeList));
-
-        Reader fileReader = new InputStreamReader(new FileInputStream(new File(pathToFile)), "UTF-8");
-        instances.addThruPipe(new CsvIterator (fileReader, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"),
-                3, 2, 1)); // data, label, name fields
+        instances.addThruPipe(new ArrayIterator (textList));
 
         // Create a model with 5 topics, alpha_t = 0.01, beta_w = 0.01
         //  Note that the first parameter is passed as the sum over topics, while
@@ -367,9 +345,38 @@ public class ArticleController extends Controller {
         }
         //System.out.println("first out print:" + out);
 
+        ArrayList<String> topic1 = new ArrayList<>();
+        ArrayList<String> topic2 = new ArrayList<>();
+        ArrayList<String> topic3 = new ArrayList<>();
+        ArrayList<String> topic4 = new ArrayList<>();
+        ArrayList<String> topic5 = new ArrayList<>();
         // Estimate the topic distribution of the first instance,
         //  given the current Gibbs state.
-        double[] topicDistribution = model.getTopicProbabilities(0);
+        for(int i = 0; i < textList.size(); i++) {
+            double[] topicDistribution = model.getTopicProbabilities(i);
+
+            double topDistribution = topicDistribution[0];
+            int listNumber = 1;
+            for (int i2 = 1; i2 < topicDistribution.length; i2++) {
+                if (topicDistribution[i] > topDistribution) {
+                    topDistribution = topicDistribution[i];
+                    listNumber = i + 1;
+                }
+            }
+
+            switch(listNumber) {
+                case 1:
+                    topic1.add(textList.get(i));
+                case 2:
+                    topic2.add(textList.get(i));
+                case 3:
+                    topic3.add(textList.get(i));
+                case 4:
+                    topic4.add(textList.get(i));
+                case 5:
+                    topic5.add(textList.get(i));
+            }
+        }
 
         // Get an array of sorted sets of word ID/count pairs
         ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
@@ -410,6 +417,11 @@ public class ArticleController extends Controller {
         TopicInferencer inferencer = model.getInferencer();
         double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);
         //System.out.println("0\t" + testProbabilities[0]);
+        topicsList.add(topic1);
+        topicsList.add(topic2);
+        topicsList.add(topic3);
+        topicsList.add(topic4);
+        topicsList.add(topic5);
 
         return topicsList;
     }
