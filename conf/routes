@@ -5,11 +5,11 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index(request: Request)
 GET     /ws                         controllers.HomeController.socket()
-GET     /resultsView                controllers.HomeController.resultsView(request: Request, results: java.util.List[models.Article])
+GET     /resultsView                controllers.HomeController.resultsView(results: java.util.List[models.WPArticle])
 
 GET     /result/:category/:title/:content       controllers.ArticleController.resultView(category: String, title: String, content: String)
 GET     /articles                   controllers.ArticleController.index()
-# GET     /articles/index             controllers.ArticleController.indexDB()
+#GET     /articles/index             controllers.ArticleController.indexDB()
 GET     /articles/:searchTerm       controllers.ArticleController.search(searchTerm: String)
 
 # Map static resources from the /public folder to the /assets URL path

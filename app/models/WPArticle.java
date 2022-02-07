@@ -1,17 +1,22 @@
 package models;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.*;
+import play.mvc.QueryStringBindable;
 
-public class WPArticle {
+import java.io.Serializable;
+import java.util.*;
+
+public class WPArticle implements QueryStringBindable<WPArticle>, Serializable {
+    private static final long serialVersionUID = 7860293794078412243L;
 
     public String id;
     public String article_url;
     public String title;
     public String author;
-    public Date published_date;
-    public List<Map<String, String>> contents;
+    public long published_date;
+    public List<Content> contents;
     public String type;
     public String source;
 
@@ -19,7 +24,7 @@ public class WPArticle {
 
     }
 
-    WPArticle(String id, String article_url, String title, String author, Date published_date, List<Map<String, String>> contents, String type, String source){
+    public WPArticle(String id, String article_url, String title, String author, long published_date, List<Content> contents, String type, String source){
         super();
         this.id = id;
         this.article_url = article_url;
@@ -55,17 +60,17 @@ public class WPArticle {
         this.author = author;
     }
 
-    public Date getPublishedDate() {
+    public long getPublishedDate() {
         return published_date;
     }
-    public void setPublishedDate(Date published_date) {
+    public void setPublishedDate(long published_date) {
         this.published_date = published_date;
     }
 
-    public List<Map<String, String>> getContents() {
+    public List<Content> getContents() {
         return contents;
     }
-    public void setContents(List<Map<String, String>> contents) {
+    public void setContents(List<Content> contents) {
         this.contents = contents;
     }
 
@@ -74,5 +79,35 @@ public class WPArticle {
 
     public String getSource() { return source; }
     public void setSource(String source) { this.source = source; }
+
+    @Override
+    public Optional<WPArticle> bind(String key, java.util.Map<String, String[]> params) {
+        List<Content> cL = new Gson().fromJson(params.get("contents")[0], List.class);
+        try {
+            id = String.valueOf(params.get("category")[0]);
+            article_url = String.valueOf(params.get("article_url")[0]);
+            title = String.valueOf(params.get("title")[0]);
+            author = String.valueOf(params.get("author")[0]);
+            published_date = Long.parseLong(params.get("published_date")[0]);
+            contents = cL;
+            type = String.valueOf(params.get("type")[0]);
+            source = String.valueOf(params.get("source")[0]);
+
+            return Optional.of(this);
+
+        } catch (Exception e) { // no parameter match return None
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public String unbind(String key) {
+        return new StringBuilder().append("id=").append(id).append("article_url=").append(article_url).append("&title=").append(title).append("author=").append(author).append("published_date=").append(published_date).append("&contents=").append(contents).append("type=").append(type).append("source=").append(source).toString();
+    }
+
+    @Override
+    public String javascriptUnbind() {
+        return null;
+    }
 
 }

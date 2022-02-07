@@ -1,9 +1,13 @@
 package controllers;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.Content;
 import models.WPArticle;
+import models.WPArticleString;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -52,11 +56,10 @@ public class ArticleController extends Controller {
         BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
         ObjectMapper objectMapper = new ObjectMapper();
 
-        IndexRequest indexRequest = new IndexRequest("wj-articles");
-        while ((reader.readLine()) != null) {
+        IndexRequest indexRequest = new IndexRequest("wpost-articles");
+        for (int i =0; i < 2000; i++) {
             try {
                 String line = reader.readLine();
-                //JsonNode inputJSON = objectMapper.readTree(line);
                 WPArticle article = objectMapper.readValue(line, WPArticle.class);
 
                 XContentBuilder builder = XContentFactory.jsonBuilder()
@@ -66,13 +69,14 @@ public class ArticleController extends Controller {
                         .field("title", article.getTitle())
                         .field("author", article.getAuthor())
                         .field("published_date", article.getPublishedDate())
-                        .field("contents", article.getContents())
+                        .field("contents", objectMapper.writeValueAsString(article.getContents()))
                         .field("type", article.getType())
                         .field("source", article.getSource())
                         .endObject();
 
 
                 indexRequest.source(builder);
+
 
                 IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
                 System.out.println(response.getResult());
@@ -81,55 +85,6 @@ public class ArticleController extends Controller {
                 e.printStackTrace();
             }
         }
-        // List<String> categories = Arrays.asList("business", "entertainment", "politics", "tech");
-
-        /* for(String category: categories) {
-            String dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/extract bbc data/" + category;
-            int dir_size = new File(dir).list().length;
-            System.out.println(dir_size);
-            String file_num = "";
-
-            for(int i = 1; i < dir_size+1; i++) {
-                if (i < 10) {
-                    file_num = "00" + i;
-                } else if (i >= 10 && i < 100) {
-                    file_num = "0" + i;
-                } else {
-                    file_num = "" + i;
-                }
-
-                try {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    File myFile = new File(dir + "/" + file_num + ".txt");
-                    Scanner myReader = new Scanner(myFile);
-                    String title = myReader.nextLine();
-                    System.out.println(title);
-                    //while (myReader.hasNextLine()) {
-                      //  String data = myReader.nextLine() + " ";
-                      //  stringBuilder.append(data);
-                    //}
-                    myReader.close();
-                    String content = stringBuilder.toString();
-
-                    XContentBuilder builder = XContentFactory.jsonBuilder()
-                            .startObject()
-                            .field("category", category)
-                            .field("title", title)
-                            .field("content", content)
-                    .endObject();
-
-                    IndexRequest indexRequest = new IndexRequest("articles-db");
-                    indexRequest.source(builder);
-
-                    IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-                    System.out.println(response.getResult());
-                } catch (FileNotFoundException e) {
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
-                }
-            }
-        }
-         */
         return ok(views.html.articles.populated.render());
     }
 
@@ -139,48 +94,30 @@ public class ArticleController extends Controller {
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
 
         QueryBuilder query = QueryBuilders.matchQuery("title", searchTerm);
-        SearchRequest searchRequest = new SearchRequest("wj-articles");
+        SearchRequest searchRequest = new SearchRequest("wpost-articles");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] searchHits = response.getHits().getHits();
-        List<WPArticle> results =
+
+        List<WPArticleString> resultsWithString =
                 Arrays.stream(searchHits)
-                        .map(hit -> JSON.parseObject(hit.getSourceAsString(), WPArticle.class))
+                        .map(hit -> JSON.parseObject(hit.getSourceAsString(), WPArticleString.class))
                         .collect(Collectors.toList());
 
-        String pathToFile = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/searchResults.txt";
 
-        for (WPArticle result: results) {
-            System.out.println("result is " + result);
-           /* try {
-                FileWriter myWriter = new FileWriter(pathToFile);
-                myWriter.write(result.title + "\t" + result.category + "\t" + result.content + "\n");
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-
-            */
-        }
-        return null;
-
-        //topicModel(pathToFile);
-
-       /* File searchResultsFile = new File(pathToFile);
-        if (searchResultsFile.delete()) {
-            System.out.println("Deleted the file: " + searchResultsFile.getName());
-        } else {
-            System.out.println("Failed to delete the file.");
+        List<WPArticle> results = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<List<Content>> contentType = new TypeReference<>() {};
+        for (WPArticleString result: resultsWithString) {
+            List<Content> contentsToArray = objectMapper.readValue(result.contents,  contentType);
+            WPArticle article = new WPArticle(result.id, result.article_url, result.title, result.author, result.published_date, contentsToArray, result.type, result.source);
+            results.add(article);
         }
 
-        */
-
-       // return ok(views.html.results.render(request, results));
+       return ok(views.html.results.render(results));
     }
 
     public Result resultView(String category, String title, String content) {
