@@ -40,8 +40,8 @@ public class HomeController extends Controller {
         return ok(views.html.index.render(request));
     }
 
-    public Result resultsView(List<Article> results, ArrayList<ArrayList<String>> topics) {
-        return ok(views.html.results.render(results, topics));
+    public Result resultsView(List<Article> results, ArrayList<ArrayList<String>> topics, ArrayList<String> topic1, ArrayList<String> topic2, ArrayList<String> topic3, ArrayList<String> topic4, ArrayList<String> topic5) {
+        return ok(views.html.results.render(results, topics, topic1, topic2, topic3, topic4, topic5));
     }
 
     public WebSocket socket() {

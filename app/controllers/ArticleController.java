@@ -355,12 +355,12 @@ public class ArticleController extends Controller {
         for(int i = 0; i < textList.size(); i++) {
             double[] topicDistribution = model.getTopicProbabilities(i);
 
-            double topDistribution = topicDistribution[0];
-            int listNumber = 1;
-            for (int i2 = 1; i2 < topicDistribution.length; i2++) {
-                if (topicDistribution[i] > topDistribution) {
-                    topDistribution = topicDistribution[i];
-                    listNumber = i + 1;
+            double topDistribution = 0;
+            int listNumber = 0;
+            for (int i2 = 0; i2 < topicDistribution.length; i2++) {
+                if (topicDistribution[i2] > topDistribution) {
+                    topDistribution = topicDistribution[i2];
+                    listNumber = i2 + 1;
                 }
             }
 
