@@ -6,6 +6,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.stream.Materializer;
 import models.Article;
+import models.WPArticle;
 import play.libs.streams.ActorFlow;
 import play.mvc.Controller;
 import play.mvc.Http;

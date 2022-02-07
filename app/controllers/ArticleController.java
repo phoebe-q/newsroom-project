@@ -1,12 +1,22 @@
 package controllers;
 
 import com.alibaba.fastjson.JSON;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.Content;
+import models.WPArticle;
+import models.WPArticleString;
+
 import com.google.api.services.youtube.model.*;
 import com.sapher.youtubedl.YoutubeDL;
 import com.sapher.youtubedl.YoutubeDLException;
 import com.sapher.youtubedl.YoutubeDLRequest;
 import com.sapher.youtubedl.YoutubeDLResponse;
 import org.apache.commons.io.FileUtils;
+
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -65,56 +75,38 @@ public class ArticleController extends Controller {
 
     public Result indexDB() throws IOException {
         ClientConfiguration clientConfiguration =
-                ClientConfiguration.builder().connectedTo("localhost:9200").build();
+                ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(6000000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
+        BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        IndexRequest indexRequest = new IndexRequest("wpost-articles");
+        for (int i =0; i < 2000; i++) {
+            try {
+                String line = reader.readLine();
+                WPArticle article = objectMapper.readValue(line, WPArticle.class);
+
+                XContentBuilder builder = XContentFactory.jsonBuilder()
+                        .startObject()
+                        .field("id", article.getId())
+                        .field("article_url", article.getArticleURL())
+                        .field("title", article.getTitle())
+                        .field("author", article.getAuthor())
+                        .field("published_date", article.getPublishedDate())
+                        .field("contents", objectMapper.writeValueAsString(article.getContents()))
+                        .field("type", article.getType())
+                        .field("source", article.getSource())
+                        .endObject();
 
 
-        List<String> categories = Arrays.asList("business", "entertainment", "politics", "tech");
+                indexRequest.source(builder);
 
-        for(String category: categories) {
-            String dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/extract bbc data/" + category;
-            int dir_size = new File(dir).list().length;
-            System.out.println(dir_size);
-            String file_num = "";
 
-            for(int i = 1; i < dir_size+1; i++) {
-                if (i < 10) {
-                    file_num = "00" + i;
-                } else if (i >= 10 && i < 100) {
-                    file_num = "0" + i;
-                } else {
-                    file_num = "" + i;
-                }
+                IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+                System.out.println(response.getResult());
 
-                try {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    File myFile = new File(dir + "/" + file_num + ".txt");
-                    Scanner myReader = new Scanner(myFile);
-                    String title = myReader.nextLine();
-                    System.out.println(title);
-                    while (myReader.hasNextLine()) {
-                        String data = myReader.nextLine() + " ";
-                        stringBuilder.append(data);
-                    }
-                    myReader.close();
-                    String content = stringBuilder.toString();
-
-                    XContentBuilder builder = XContentFactory.jsonBuilder()
-                            .startObject()
-                            .field("category", category)
-                            .field("title", title)
-                            .field("content", content)
-                    .endObject();
-
-                    IndexRequest indexRequest = new IndexRequest("articles-db");
-                    indexRequest.source(builder);
-
-                    IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-                    System.out.println(response.getResult());
-                } catch (FileNotFoundException e) {
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return ok(views.html.articles.populated.render());
@@ -124,21 +116,31 @@ public class ArticleController extends Controller {
     public Result search(Http.Request request, String searchTerm) throws Exception, IOException, GeneralSecurityException, YoutubeDLException {
 
         ClientConfiguration clientConfiguration =
-                ClientConfiguration.builder().connectedTo("localhost:9200").build();
+                ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(600000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
 
-        QueryBuilder query = QueryBuilders.matchQuery("content", searchTerm);
-        SearchRequest searchRequest = new SearchRequest("articles-db");
+        QueryBuilder query = QueryBuilders.matchQuery("title", searchTerm);
+        SearchRequest searchRequest = new SearchRequest("wpost-articles");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] searchHits = response.getHits().getHits();
-        List<Article> results =
+
+        List<WPArticleString> resultsWithString =
                 Arrays.stream(searchHits)
-                        .map(hit -> JSON.parseObject(hit.getSourceAsString(), Article.class))
+                        .map(hit -> JSON.parseObject(hit.getSourceAsString(), WPArticleString.class))
                         .collect(Collectors.toList());
+
+        List<WPArticle> results = new ArrayList<>();
+          ObjectMapper objectMapper = new ObjectMapper();
+          TypeReference<List<Content>> contentType = new TypeReference<>() {};
+          for (WPArticleString result: resultsWithString) {
+              List<Content> contentsToArray = objectMapper.readValue(result.contents,  contentType);
+              WPArticle article = new WPArticle(result.id, result.article_url, result.title, result.author, result.published_date, contentsToArray, result.type, result.source);
+              results.add(article);
+          }
 
         List<String> captions = searchYT(searchTerm);
 

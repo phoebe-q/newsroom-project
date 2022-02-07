@@ -7,10 +7,11 @@ GET     /                           controllers.HomeController.index(request: Re
 GET     /ws                         controllers.HomeController.socket()
 # GET     /resultsView                controllers.HomeController.resultsView(results: java.util.List[models.Article], topicsList: java.util.ArrayList[java.util.ArrayList[String]], topic1: java.util.ArrayList[String], topic2: java.util.ArrayList[String], topic3: java.util.ArrayList[String], topic4: java.util.ArrayList[String], topic5: java.util.ArrayList[String])
 
+
 #GET     /result     controllers.ArticleController.resultView(contents: java.util.List[String])
 GET     /articles                   controllers.ArticleController.index()
 #GET     /articles/index             controllers.ArticleController.indexDB()
-GET     /articles/:searchTerm       controllers.ArticleController.search(request: Request, searchTerm: String)
+GET     /articles/:searchTerm       controllers.ArticleController.search(searchTerm: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
