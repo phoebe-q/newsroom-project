@@ -1,135 +1,105 @@
 @(results: List[Article], topics: ArrayList[ArrayList[String]], topic1: ArrayList[String], topic2: ArrayList[String], topic3: ArrayList[String], topic4: ArrayList[String], topic5: ArrayList[String])
+@import java.math.BigInteger; var i=1;
 @layout("Results") {
-<!DOCTYPE html>
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <header class="header-wrapper results">
-            <div>
-                <h3 class="float-md-start mb-0">Results</h3>
-            </div>
-        </header>
-        <main>
-            <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
-                <ul class="nav flex-column text-white w-100">
-                    <a href="#" class="nav-link h5 text-white my-2">
-                        Topics
-                    </a>
-                    @for(i <- 0 to topics.size()-1) {
-                        @if(!topics.get(i).isEmpty) {
-                            <li href="#" class="nav-link text-white" id=("topic"+i)>
-                                @for(entry <- topics.get(i)) {
-                                    <span class="mx-2">@entry</span>
-                                }
-                            </li>
-                        }
-                    }
-                </ul>
-            </div>
-            <div class="p-1 my-container active-cont">
-                <h3>Main Content</h3>
-                <div class="card-container">
-
+    <!DOCTYPE html>
+        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+            <header class="header-wrapper results">
+                <div>
+                    <h3 class="float-md-start mb-0">Results</h3>
                 </div>
-            </div>
-        </main>
-    </div>
-    <body>
-        <script type="text/javascript">
-                const topic1 = document.querySelectorAll("#topic0");
-                const topic2 = document.querySelectorAll("#topic1");
-                const topic3 = document.querySelectorAll("#topic2");
-                const topic4 = document.querySelectorAll("#topic3");
-                const topic5 = document.querySelectorAll("#topic4");
-                const sidebar = document.querySelector("#sidebar");
-                const container = document.querySelector(".my-container");
+            </header>
+            <main>
+                <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
+                    <ul class="nav flex-column text-white w-100">
+                        <a href="#" class="nav-link h5 text-white my-2">
+                            Topics
+                        </a>
+                        @for(topic <- topics) {
+                            @if(!topic.isEmpty()) {
+                                    <li href="#" class="nav-link text-white" id="topic">
+                                        @for(entry <- topic) {
+                                            <span class="mx-2">@entry</span>
+                                        }
+                                    </li>
+                            }
+                            @{i+=1}
+                        }
+                    </ul>
+                </div>
+                <div class="p-1 my-container active-cont">
+                    <h3>Main Content</h3>
+                    <div class="card-container">
 
-                topic1.addEventListener("click", () => {
-                    sidebar.classList.toggle("active-nav");
-                    container.classList.toggle("active-cont");
-
-                    console.log("case 1")
-                    renderCard(@topic1);
-                });
-
-                topic2.addEventListener("click", () => {
-                    sidebar.classList.toggle("active-nav");
-                    container.classList.toggle("active-cont");
-
-                    console.log("case 2")
-                    renderCard(@topic2);
-                });
-
-                topic3.addEventListener("click", () => {
-                    sidebar.classList.toggle("active-nav");
-                    container.classList.toggle("active-cont");
-
-                    console.log("case 3")
-                    renderCard(@topic3);
-                });
-
-                topic4.addEventListener("click", () => {
-                    sidebar.classList.toggle("active-nav");
-                    container.classList.toggle("active-cont");
-
-                    console.log("case 4")
-                    renderCard(@topic4);
-                });
-
-                topic5.addEventListener("click", () => {
-                    sidebar.classList.toggle("active-nav");
-                    container.classList.toggle("active-cont");
-
-                    console.log("case 5")
-                    renderCard(@topic5);
-                });
-
-
-                /*function showTopic(i) {
+                    </div>
+                </div>
+            </main>
+        </div>
+        <body>
+            <script type="text/javascript">
+                    const topic = document.querySelectorAll("#topic");
                     const sidebar = document.querySelector("#sidebar");
                     const container = document.querySelector(".my-container");
 
-                    sidebar.classList.toggle("active-nav");
-                    container.classList.toggle("active-cont");
-                    switch (i) {
-                        case 0:
-                            console.log("case 1")
-                            renderCard(@topic1);
-                            break;
-                        case 1:
-                            console.log("case 2")
-                            renderCard(@topic2);
-                            break;
-                        case 2:
-                            console.log("case 3")
-                            renderCard(@topic3);
-                            break;
-                        case 3:
-                            console.log("case 4")
-                            renderCard(@topic4);
-                            break;
-                        case 4:
-                            console.log("case 5")
-                            renderCard(@topic5);
-                            break;
-                    }
-                }
-                */
+                    topic.forEach(function(t){
+                        t.addEventListener("click", () => {
+                            sidebar.classList.toggle("active-nav");
+                            container.classList.toggle("active-cont");
+                        });
+                    });
 
-                function renderCard(topic) {
-                    for (const t in topic) {
-                        const insertPoint = document.querySelector(".card-container");
-                        const card = document.createElement('div');
-                        card.className = "card";
-                        card.innerHTML = "<div class='card-body'>" +
-                                "<h5 class='card-title'>" + t.title + "</h5>" +
-                                "<h6 class='card-subtitle mb-2 text-muted'>" + t.category + "</h6>" +
-                                "<p class='card-text'>" + t.content + "</p>" +
-                                "<a href='#' class='card-link'>" + 'Card link' + "</a>" +
-                                "<a href='#' class='card-link'>" + 'Another link' + "</a>" +
-                                "</div>";
+                    /*const t1 = document.querySelector("#topic1");
+                    const t2 = document.querySelector("#topic2");
+                    const t3 = document.querySelector("#topic3");
+                    const t4 = document.querySelector("#topic4");
+                    const t5 = document.querySelector("#topic5");
+                    const sidebar = document.querySelector("#sidebar");
+                    const container = document.querySelector(".my-container");
+                    */
 
-                        insertPoint.appendChild(card);
+                    /* function showTopic(i) {
+                        console.log("TTTTTOPIC")
+                        switch (i) {
+                            case 1:
+                                console.log("case 1")
+                                renderCard(@topic1);
+                                break;
+                            case 2:
+                                console.log("case 2")
+                                renderCard(@topic2);
+                                break;
+                            case 3:
+                                console.log("case 3")
+                                renderCard(@topic3);
+                                break;
+                            case 4:
+                                console.log("case 4")
+                                renderCard(@topic4);
+                                break;
+                            case 5:
+                                console.log("case 5")
+                                renderCard(@topic5);
+                                break;
+                        }
                     }
-                }
-        </script>
-    </body>
+                    */
+
+                    function renderCard(topic) {
+                        console.log("HELLLLLLLLO");
+                        for (const t in topic) {
+                            const insertPoint = document.querySelector(".card-container");
+                            const card = document.createElement('div');
+                            card.className = "card";
+                            card.innerHTML = "<div class='card-body'>" +
+                                    "<h5 class='card-title'>" + "t.title" + "</h5>" +
+                                    "<h6 class='card-subtitle mb-2 text-muted'>" + "t.category" + "</h6>" +
+                                    "<p class='card-text'>" + t + "</p>" +
+                                    "<a href='#' class='card-link'>" + 'Card link' + "</a>" +
+                                    "<a href='#' class='card-link'>" + 'Another link' + "</a>" +
+                                    "</div>";
+
+                            insertPoint.appendChild(card);
+                        }
+                    }
+            </script>
+        </body>
 }
