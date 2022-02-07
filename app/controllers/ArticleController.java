@@ -133,41 +133,40 @@ public class ArticleController extends Controller {
                         .map(hit -> JSON.parseObject(hit.getSourceAsString(), WPArticleString.class))
                         .collect(Collectors.toList());
 
-
-        searchYT(searchTerm);
-
-        String pathToFile = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/searchResults.txt";
-
-        for (Article result: results) {
-            try {
-                FileWriter myWriter = new FileWriter(pathToFile);
-                myWriter.write(result.title + "\t" + result.category + "\t" + result.content + "\n");
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-        }
-
-        ArrayList<ArrayList<String>> topicsList = topicModel(pathToFile);
-
-
         List<WPArticle> results = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<List<Content>> contentType = new TypeReference<>() {};
-        for (WPArticleString result: resultsWithString) {
-            List<Content> contentsToArray = objectMapper.readValue(result.contents,  contentType);
-            WPArticle article = new WPArticle(result.id, result.article_url, result.title, result.author, result.published_date, contentsToArray, result.type, result.source);
-            results.add(article);
+          ObjectMapper objectMapper = new ObjectMapper();
+          TypeReference<List<Content>> contentType = new TypeReference<>() {};
+          for (WPArticleString result: resultsWithString) {
+              List<Content> contentsToArray = objectMapper.readValue(result.contents,  contentType);
+              WPArticle article = new WPArticle(result.id, result.article_url, result.title, result.author, result.published_date, contentsToArray, result.type, result.source);
+              results.add(article);
+          }
+
+        List<String> captions = searchYT(searchTerm);
+
+        List<String> topicModellingText = new ArrayList<>();
+        for (Article result: results) {
+            topicModellingText.add(result.content);
         }
+        topicModellingText.addAll(captions);
+        ArrayList<ArrayList<String>> topicsListAll = topicModel(topicModellingText);
 
-        return ok(views.html.results.render(results, topicsList));
+        ArrayList<ArrayList<String>> topicsList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            topicsList.add(topicsListAll.get(i));
+        }
+        ArrayList<String> topic1 = topicsListAll.get(3);
+        ArrayList<String> topic2 = topicsListAll.get(4);
+        ArrayList<String> topic3 = topicsListAll.get(5);
+        ArrayList<String> topic4 = topicsListAll.get(6);
+        ArrayList<String> topic5 = topicsListAll.get(7);
+
+        return ok(views.html.results.render(results, topicsList, topic1, topic2, topic3, topic4, topic5));
     }
 
-    public Result resultView(String category, String title, String content) {
-        return ok(views.html.result.render(category, title, content));
-    }
+    // public Result resultView(String category, String title, String content) {
+       // return ok(views.html.result.render(category, title, content));
+    // }
 
     private static final String CLIENT_SECRETS= "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/client_secret.json";
     private static final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.force-ssl");
@@ -189,7 +188,6 @@ public class ArticleController extends Controller {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-                        .setAccessType("offline")
                         .build();
         Credential credential =
                 new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("phoebe.quinn04@gmail.com");
@@ -217,10 +215,11 @@ public class ArticleController extends Controller {
      *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public void searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
+    public List<String> searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
         YouTube youtubeService = getService();
         List<String> snippet = Arrays.asList("id,snippet");
         List<String> video = Arrays.asList("video");
+
         // Define and execute the API request
         YouTube.Search.List request = youtubeService.search()
                 .list(snippet);
@@ -233,38 +232,26 @@ public class ArticleController extends Controller {
                 .setVideoEmbeddable("true")
                 .execute();
         List<SearchResult> results = response.getItems();
+
         int i = 1;
         for(SearchResult result: results){
             ResourceId resourceId = result.getId();
             String videoId = resourceId.getVideoId();
-            System.out.println("video ID: " + videoId);
 
             downloadCaptions(videoId, i);
             i++;
         }
-        parseVtt();
-    }
-    public String getCaptionID(String id) throws GeneralSecurityException, IOException {
-        YouTube youtubeService = getService();
-        // Define and execute the API request
-        YouTube.Captions.List request = youtubeService.captions()
-                .list(Collections.singletonList("id"), id);
-        CaptionListResponse response = request.execute();
-
-        List<Caption> results = response.getItems();
-        String captionId = results.get(0).getId();
-        System.out.println(captionId);
-        return captionId;
+        List<String> captionsList = parseVtt();
+        return captionsList;
     }
 
     public void downloadCaptions(String id, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
         // Video url to download
         String videoUrl = "https://www.youtube.com/watch?v=" + id;
-
         // Destination directory
         String directory = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube/";
-
         YoutubeDL.setExecutablePath("/usr/local/Cellar/youtube-dl/2021.12.17/libexec/bin/youtube-dl");
+
         // Build request
         YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
         request.setOption("all-subs");		// --write-sub
@@ -281,9 +268,10 @@ public class ArticleController extends Controller {
 
     }
 
-    public void parseVtt() throws IOException {
+    public List<String> parseVtt() throws IOException {
         String vtt_dir = "/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube";
         int dir_size = new File(vtt_dir).list().length;
+        List<String> captionsList = new ArrayList<>();
 
         if (dir_size > 0) {
             for (int i = 1; i < dir_size + 1; i++) {
@@ -306,17 +294,18 @@ public class ArticleController extends Controller {
                     r.close();
                     String subtitlesText = stringBuilder.toString();
 
-                    System.out.println("subtext = " + subtitlesText);
+                    captionsList.add(subtitlesText);
                 }
             }
         }
         FileUtils.cleanDirectory(new File(vtt_dir));
+        return captionsList;
     }
 
-   public ArrayList<ArrayList<String>> topicModel(String pathToFile) throws Exception {
+   public ArrayList<ArrayList<String>> topicModel(List<String> textList) throws Exception {
 
         // Begin by importing documents from text to feature sequences
-        ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
+        ArrayList<Pipe> pipeList = new ArrayList<>();
 
         // Pipes: lowercase, tokenize, remove stopwords, map to features
         pipeList.add( new CharSequenceLowercase() );
@@ -325,12 +314,9 @@ public class ArticleController extends Controller {
         pipeList.add( new TokenSequence2FeatureSequence() );
 
         InstanceList instances = new InstanceList (new SerialPipes(pipeList));
+        instances.addThruPipe(new ArrayIterator (textList));
 
-        Reader fileReader = new InputStreamReader(new FileInputStream(new File(pathToFile)), "UTF-8");
-        instances.addThruPipe(new CsvIterator (fileReader, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"),
-                3, 2, 1)); // data, label, name fields
-
-        // Create a model with 100 topics, alpha_t = 0.01, beta_w = 0.01
+        // Create a model with 5 topics, alpha_t = 0.01, beta_w = 0.01
         //  Note that the first parameter is passed as the sum over topics, while
         //  the second is the parameter for a single dimension of the Dirichlet prior.
         int numTopics = 5;
@@ -361,9 +347,38 @@ public class ArticleController extends Controller {
         }
         //System.out.println("first out print:" + out);
 
+        ArrayList<String> topic1 = new ArrayList<>();
+        ArrayList<String> topic2 = new ArrayList<>();
+        ArrayList<String> topic3 = new ArrayList<>();
+        ArrayList<String> topic4 = new ArrayList<>();
+        ArrayList<String> topic5 = new ArrayList<>();
         // Estimate the topic distribution of the first instance,
         //  given the current Gibbs state.
-        double[] topicDistribution = model.getTopicProbabilities(0);
+        for(int i = 0; i < textList.size(); i++) {
+            double[] topicDistribution = model.getTopicProbabilities(i);
+
+            double topDistribution = 0;
+            int listNumber = 0;
+            for (int i2 = 0; i2 < topicDistribution.length; i2++) {
+                if (topicDistribution[i2] > topDistribution) {
+                    topDistribution = topicDistribution[i2];
+                    listNumber = i2 + 1;
+                }
+            }
+
+            switch(listNumber) {
+                case 1:
+                    topic1.add(textList.get(i));
+                case 2:
+                    topic2.add(textList.get(i));
+                case 3:
+                    topic3.add(textList.get(i));
+                case 4:
+                    topic4.add(textList.get(i));
+                case 5:
+                    topic5.add(textList.get(i));
+            }
+        }
 
         // Get an array of sorted sets of word ID/count pairs
         ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
@@ -404,6 +419,11 @@ public class ArticleController extends Controller {
         TopicInferencer inferencer = model.getInferencer();
         double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);
         //System.out.println("0\t" + testProbabilities[0]);
+        topicsList.add(topic1);
+        topicsList.add(topic2);
+        topicsList.add(topic3);
+        topicsList.add(topic4);
+        topicsList.add(topic5);
 
         return topicsList;
     }
