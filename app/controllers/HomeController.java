@@ -16,6 +16,7 @@ import play.mvc.WebSocket;
 import javax.inject.Inject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static play.libs.Scala.asScala;
@@ -40,8 +41,8 @@ public class HomeController extends Controller {
         return ok(views.html.index.render(request));
     }
 
-    public Result resultsView(List<WPArticle> results) {
-        return ok(views.html.results.render(results));
+    public Result resultsView(List<WPArticle> results, ArrayList<ArrayList<String>> topics) {
+        return ok(views.html.results.render(results, topics));
     }
 
     public WebSocket socket() {
