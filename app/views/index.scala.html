@@ -62,12 +62,13 @@
                     }
 
                     //function used to populate the DB with ML resources
-                    //function populateDB() {
-                    //  console.log("populate");
-                    //ws.send(JSON.stringify({
-                    //  messagetype: "populateDB",
-                    //}));
-                    //}
+                    /*function populateDB() {
+                      console.log("populate");
+                        ws.send(JSON.stringify({
+                          messagetype: "populateDB",
+                        }));
+                    }
+                     */
 
                     function openWebSocketConnection() {
                         const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
@@ -88,7 +89,6 @@
                                     window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
                                     //case "populateDB":
                                     //  window.location.href = ("http://localhost:9000/articles/index");
-
                                 default:
                                     console.log("defaulted instead of realising it was url")
                                     return console.log(message);

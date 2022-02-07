@@ -6,6 +6,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.stream.Materializer;
 import models.Article;
+import models.WPArticle;
 import play.libs.streams.ActorFlow;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -40,7 +41,7 @@ public class HomeController extends Controller {
         return ok(views.html.index.render(request));
     }
 
-    public Result resultsView(List<Article> results, ArrayList<ArrayList<String>> topics) {
+    public Result resultsView(List<WPArticle> results, ArrayList<ArrayList<String>> topics) {
         return ok(views.html.results.render(results, topics));
     }
 
