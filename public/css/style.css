@@ -1,8 +1,7 @@
 /* INDEX PAGE
 */
-
-.cover-container{
-    max-width: 60em; !important;
+.welcome{
+    padding-top: 10%;
 }
 .header-wrapper {
     width: 100%;

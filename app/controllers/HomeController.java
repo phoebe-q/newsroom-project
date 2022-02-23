@@ -7,17 +7,21 @@ import akka.actor.Props;
 import akka.stream.Materializer;
 import models.Article;
 import models.WPArticle;
+import models.WPArticleIn;
 import play.libs.streams.ActorFlow;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.WebSocket;
+import structures.TopicArticle;
+import structures.TopicSubtitle;
 
 import javax.inject.Inject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static play.libs.Scala.asScala;
 
@@ -41,8 +45,8 @@ public class HomeController extends Controller {
         return ok(views.html.index.render(request));
     }
 
-    public Result resultsView(List<Article> results, ArrayList<ArrayList<String>> topics, ArrayList<String> topic1, ArrayList<String> topic2, ArrayList<String> topic3, ArrayList<String> topic4, ArrayList<String> topic5) {
-        return ok(views.html.results.render(results, topics, topic1, topic2, topic3, topic4, topic5));
+    public Result resultsView(Http.Request request, List<List<String>> topics, List<TopicArticle> topicSortedText, List<TopicSubtitle> topicSortedSubtitles) {
+        return ok(views.html.results.render(request, topics, topicSortedText, topicSortedSubtitles));
     }
 
     public WebSocket socket() {

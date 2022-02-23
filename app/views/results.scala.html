@@ -1,4 +1,8 @@
-@(results: List[Article], topics: ArrayList[ArrayList[String]], topic1: ArrayList[String], topic2: ArrayList[String], topic3: ArrayList[String], topic4: ArrayList[String], topic5: ArrayList[String])
+@import java.util
+@import structures.TopicSubtitle
+@import structures.TopicArticle
+@import play.mvc.Http.Request
+@(request: Request, topics: util.List[util.List[String]], topicSortedText: util.List[TopicArticle], topicSortedSubtitles: util.List[TopicSubtitle])
 @import java.math.BigInteger; var i=1;
 @layout("Results") {
     <!DOCTYPE html>
@@ -16,7 +20,7 @@
                         </a>
                         @for(topic <- topics) {
                             @if(!topic.isEmpty()) {
-                                    <li href="#" class="nav-link text-white" id="topic">
+                                    <li href="#" class="nav-link text-white" onclick="renderCard(@i)">
                                         @for(entry <- topic) {
                                             <span class="mx-2">@entry</span>
                                         }
@@ -34,72 +38,83 @@
                 </div>
             </main>
         </div>
-        <body>
-            <script type="text/javascript">
-                    const topic = document.querySelectorAll("#topic");
+    <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
+        <script type="text/javascript">
+
+                let ws;
+
+                function init() {
+                    openWebSocketConnection();
+                }
+
+                function renderCard(num, topicText, topicSubs) {
                     const sidebar = document.querySelector("#sidebar");
                     const container = document.querySelector(".my-container");
 
-                    topic.forEach(function(t){
-                        t.addEventListener("click", () => {
-                            sidebar.classList.toggle("active-nav");
-                            container.classList.toggle("active-cont");
-                        });
-                    });
+                    sidebar.classList.toggle("active-nav");
+                    container.classList.toggle("active-cont");
 
-                    /*const t1 = document.querySelector("#topic1");
-                    const t2 = document.querySelector("#topic2");
-                    const t3 = document.querySelector("#topic3");
-                    const t4 = document.querySelector("#topic4");
-                    const t5 = document.querySelector("#topic5");
-                    const sidebar = document.querySelector("#sidebar");
-                    const container = document.querySelector(".my-container");
-                    */
+                    ws.send(JSON.stringify({
+                        messagetype: "searchTerm",
+                        num: num,
+                        topicText: topicText,
+                        topicSubs: topicSubs,
+                    }));
+                }
 
-                    /* function showTopic(i) {
-                        console.log("TTTTTOPIC")
-                        switch (i) {
-                            case 1:
-                                console.log("case 1")
-                                renderCard(@topic1);
-                                break;
-                            case 2:
-                                console.log("case 2")
-                                renderCard(@topic2);
-                                break;
-                            case 3:
-                                console.log("case 3")
-                                renderCard(@topic3);
-                                break;
-                            case 4:
-                                console.log("case 4")
-                                renderCard(@topic4);
-                                break;
-                            case 5:
-                                console.log("case 5")
-                                renderCard(@topic5);
-                                break;
+                function openWebSocketConnection() {
+                    const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
+
+                    //alert(wsURL);
+                    ws = new WebSocket(wsURL);
+                    ws.onmessage = function (event) {
+                        let message;
+                        message = JSON.parse(event.data);
+
+                        switch (message.messagetype) {
+                            case "render":
+                                let num = message.num;
+                                let topicTextList = JSON.parse(message.topicText);
+                                let topicSubList = JSON.parse(message.topicSubs);
+                                for (let topicText of topicTextList) {
+                                    if ((topicText.topicId).toString() === message.num) {
+                                        const insertPoint = document.querySelector(".card-container");
+                                        const card = document.createElement('div');
+                                        card.className = "card";
+                                        card.innerHTML = "<div class='card-body'>" +
+                                                "<h5 class='card-title'>" + topicText.article["title"] + "</h5>" +
+                                                "<h6 class='card-subtitle mb-2 text-muted'>" + topicText.article["author"] + "</h6>" +
+                                                "<p class='card-text'>" + t.get("article").get("contents") + "</p>" +
+                                                "<a href={topicText.article.article_url} class='card-link'>" + 'View Article Online' + "</a>" +
+                                                "</div>";
+
+                                        insertPoint.appendChild(card);
+                                    }
+                                }
+                                for (let topicSub of topicSubList) {
+                                    if ((topicSub.topicId).toString() === message.num) {
+                                        const insertPoint = document.querySelector(".card-container");
+                                        const card = document.createElement('div');
+                                        let videoId = topicSub.topicSubtitle.videoId
+                                        card.className = "card";
+                                        card.innerHTML = "<div class='card-body'>" +
+                                                "<h5 class='card-title'>" + 'title' + "</h5>" +
+                                                "<h6 class='card-subtitle mb-2 text-muted'>" + 'BBC' + "</h6>" +
+                                                "<p class='card-text'>" + topicSub.topicSubtitle.subtitleText + "</p>" +
+                                                "<a href='#' class='card-link'>" + 'Video Link' + "</a>" +
+                                                "<iframe width='420' height='315' src='https://www.youtube.com/embed/'+videoId>"+"</iframe>" +
+                                                "</div>";
+
+                                        insertPoint.appendChild(card);
+                                    }
+                                }
+                            default:
+                                console.log("defaulted instead of realising it was url")
+                                return console.log(message);
                         }
-                    }
-                    */
+                    };
+                }
 
-                    function renderCard(topic) {
-                        console.log("HELLLLLLLLO");
-                        for (const t in topic) {
-                            const insertPoint = document.querySelector(".card-container");
-                            const card = document.createElement('div');
-                            card.className = "card";
-                            card.innerHTML = "<div class='card-body'>" +
-                                    "<h5 class='card-title'>" + "t.title" + "</h5>" +
-                                    "<h6 class='card-subtitle mb-2 text-muted'>" + "t.category" + "</h6>" +
-                                    "<p class='card-text'>" + t + "</p>" +
-                                    "<a href='#' class='card-link'>" + 'Card link' + "</a>" +
-                                    "<a href='#' class='card-link'>" + 'Another link' + "</a>" +
-                                    "</div>";
-
-                            insertPoint.appendChild(card);
-                        }
-                    }
-            </script>
-        </body>
+        </script>
+    </body>
 }
