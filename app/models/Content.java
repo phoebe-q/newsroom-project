@@ -4,12 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
-/**
- * News articles are divided into multiple types of content block. A ContentItem represents one of these pieces of content.
- *
- * @author Richard
- *
- */
 @JsonIgnoreProperties(ignoreUnknown = true) // this tells Jackson to ignore any properties found in the json that does not have an associated class variable
 public class Content implements Serializable {
     private static final long serialVersionUID = -664641145229312192L;

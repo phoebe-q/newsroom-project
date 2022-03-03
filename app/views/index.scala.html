@@ -3,30 +3,43 @@
 @layout("NewsRoom") {
 <!DOCTYPE html>
 
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-                    <header class="header-wrapper">
-                        <div>
-                            <h3 class="float-md-start mb-0">NewsRoom: A News Consolidation Tool</h3>
-                        </div>
-                    </header>
-                    <main class="px-3">
-                        <h3>Start Searching</h3>
-                        <p class="lead">Just enter the term you want to find out more about and hit search to begin</p>
-                        <p class="lead">
-                        <form>
-                            <input class="form-control" id="searchTerm" type="text"/>
-                            <div class="btn-wrapper">
-                                <a href="javascript:search()" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Search</a>
-                            </div>
-                            <div class="spinner-container">
-                                <div class="d-none spinner-border text-info" role="status" id="spinner">
-                                    <span class="sr-only"></span>
-                                </div>
-                            </div>
-                        </form>
-                        </p>
-                    </main>
+    <div class="cover-container d-flex w-100 h-100 p-4 mx-auto flex-column">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand">
+                    <img src="@routes.Assets.at("images/site-logo-circle.png")" alt="logo" width="60" height="60">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                    <div class="d-flex">
+                        <input class="form-control me-2" type="search" id="searchTerm" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-light" onclick="search()">Search</button>
+                    </div>
                 </div>
+            </div>
+        </nav>
+        <div class="welcome" id="welcome-message" style="display: block">
+            <h3>Welcome to Newsroom - your news consolidation tool</h3>
+            <h4>Enter the term you want to know more about and hit search to begin!</h4>
+        </div>
+        <ul id="events" style="display: block"></ul>
+        <div id="article-container" style="display: none">
+            <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
+                <ul class="nav flex-column text-white w-100" id="topics-container">
+                    <a href="#" class="nav-link h5 text-white my-2">
+                        Topics
+                    </a>
+                </ul>
+            </div>
+            <div class="p-1 my-container active-cont">
+                <div class="card-container" id="card-container">
+
+                </div>
+            </div>
+        </div>
+    </div>
 
         <body id="mainBody" wsdata="@routes.HomeController.socket.webSocketURL(request)" onload="init()">
             <script type="text/javascript">
@@ -38,57 +51,129 @@
                     }
 
                     function search() {
-                        const spinner = document.querySelector("#spinner");
+                        const welcomeMessage = document.getElementById("welcome-message");
+                        welcomeMessage.style.display = "none";
 
-                        spinner.classList.toggle("d-none");
+                        document.getElementById("events").innerHTML = "";
 
-                        console.log("search clicked");
+                        const eventsList = document.getElementById("events");
+                        eventsList.style.display = "block";
+                        const articleContainer = document.getElementById("article-container");
+                        articleContainer.style.display = "none";
+
                         const searchTerm = document.getElementById("searchTerm").value;
-                        console.log(searchTerm)
                         ws.send(JSON.stringify({
-                            messagetype: "searchTerm",
+                            messagetype: "startSearch",
+                            searchTerm: searchTerm,
+                        }));
+                        ws.send(JSON.stringify({
+                            messagetype: "searchYoutube",
                             searchTerm: searchTerm,
                         }));
                     }
 
-                    function searchYT() {
-                        console.log("search clicked");
-                        const searchTerm = document.getElementById("searchTerm").value;
-                        console.log(searchTerm)
-                        ws.send(JSON.stringify({
-                            messagetype: "yt-searchTerm",
-                            searchTerm: searchTerm,
-                        }));
+                    function addAlert(mess) {
+                        const alert = document.createElement('li')
+                        alert.className = "alert";
+                        alert.innerHTML =
+                                "<div class='alert alert-dark' role='alert'>" +
+                                    mess +
+                                "</div>"
+
+                        document.getElementById("events").appendChild(alert);
                     }
 
-                    //function used to populate the DB with ML resources
-                    /*function populateDB() {
-                      console.log("populate");
-                        ws.send(JSON.stringify({
-                          messagetype: "populateDB",
-                        }));
+                    function populateNewsData(newsData, count) {
+                        document.getElementById("card-container").innerHTML = "";
+
+                        const insertPoint = document.getElementById("card-container");
+                        for (let i = 0; i < newsData.length; i++) {
+                            if (newsData[i]["topicId"] === count+1) {
+                                const card = document.createElement('div');
+                                card.className = "card";
+                                card.innerHTML = "<div class='card-body'>" +
+                                        "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
+                                        "<h6 class='card-subtitle mb-2 text-muted'>" + newsData[i]["article"]["author"] + "</h6>" +
+                                        "<div class='collapse' id='content"+i+"'>" +
+                                        "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
+                                        "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
+                                        "</div>" +
+                                        "</div>";
+
+                                insertPoint.appendChild(card);
+                            }
+                        }
                     }
-                     */
+
+                    function populateSubtitlesData(subtitlesData, count) {
+                        const insertPoint = document.getElementById("card-container");
+                        for (let i = 0; i < subtitlesData.length; i++) {
+                            if (subtitlesData[i]["topicId"] === count+1) {
+                                const card = document.createElement('div');
+                                card.className = "card";
+                                card.innerHTML = "<div class='card-body'>" +
+                                        "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + subtitlesData[i]["topicSubtitle"]["videoTitle"] + "</h5>" +
+                                        "<h6 class='card-subtitle mb-2 text-muted'>" + 'From the BBC' + "</h6>" +
+                                        "<div class='collapse' id='content"+i+"'>" +
+                                        "<div style='float: right; clear: right; margin-left: 5px'>" +
+                                        "<iframe width='420' height='300' align='right' src='https://www.youtube.com/embed/"+ subtitlesData[i]["topicSubtitle"]["videoId"] +"'>" + "</iframe>" +
+                                        "</div>" +
+                                        "<p class='card-text'>" + subtitlesData[i]["topicSubtitle"]["subtitleText"] + "</p>" +
+                                        "</div>" +
+                                        "</div>";
+
+                                insertPoint.appendChild(card);
+                            }
+                        }
+                    }
+
+                    function populateTopicsMenu(topics, nD, sD) {
+                        const eventsList = document.getElementById("events");
+                        eventsList.style.display = "none";
+                        const articleContainer = document.getElementById("article-container");
+                        articleContainer.style.display = "block";
+                        document.getElementById("topics-container").innerHTML = "<a href='#' class='nav-link h5 text-white my-2'>" +
+                        'Topics' +
+                        "</a>";
+                        const insertPoint = document.getElementById("topics-container");
+                        for (let i = 0; i < topics.length; i++) {
+                            let topicsString = topics[i].join(", ");
+                            const listEl = document.createElement('li');
+                            listEl.className = "nav-link text-white";
+                            listEl.onclick = function() {
+                                populateNewsData(nD, i);
+                                populateSubtitlesData(sD, i);
+                            };;
+                            listEl.innerHTML = "<span class='mx-2'>" + topicsString + "</span>"
+
+                            insertPoint.appendChild(listEl);
+                        }
+                    }
 
                     function openWebSocketConnection() {
                         const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
 
-                        //alert(wsURL);
                         ws = new WebSocket(wsURL);
                         ws.onmessage = function (event) {
                             let message;
-                            console.log("message received starting function")
                             message = JSON.parse(event.data);
                             console.log(message);
                             switch (message.messagetype) {
-                                case "yt-searchTerm":
-                                    window.location.href = ("http://localhost:9000/video/" + message.searchTerm);
+                                case "alert":
+                                    addAlert(message.text);
+                                    break;
+                                case "searchComplete":
+                                    ws.send(JSON.stringify({
+                                        messagetype: "topicModelStart"
+                                    }));
+                                    break;
+                                case "modellingComplete":
+                                    populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
+                                    break;
                                 case "searchTerm":
                                     console.log("searching...");
                                     console.log(message.searchTerm);
-                                    window.location.href = ("http://localhost:9000/articles/" + message.searchTerm);
-                                    //case "populateDB":
-                                    //  window.location.href = ("http://localhost:9000/articles/index");
+                                    break;
                                 default:
                                     console.log("defaulted instead of realising it was url")
                                     return console.log(message);

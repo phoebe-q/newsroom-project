@@ -3,7 +3,11 @@ package events;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import akka.actor.ActorRef;
+import com.sapher.youtubedl.YoutubeDLException;
 import structures.AppState;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public interface EventProcessor {
 
@@ -16,6 +20,6 @@ public interface EventProcessor {
      * @param message
      * @return
      */
-    public void processEvent(ActorRef out, AppState gameState, JsonNode message);
+    public void processEvent(ActorRef out, AppState siteState, JsonNode message) throws IOException, YoutubeDLException, GeneralSecurityException;
 
 }

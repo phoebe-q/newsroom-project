@@ -1,8 +1,26 @@
 /* INDEX PAGE
 */
-
-.cover-container{
-    max-width: 60em; !important;
+.welcome{
+    padding-top: 10%;
+}
+.card-container{
+    width: 75%;
+    height: 100%;
+    float: right;
+    overflow: scroll;
+}
+.card-text {
+    text-align: left;
+}
+.side-navbar {
+    width: 180px;
+    display: flex;
+    margin-top: 1.5%;
+    border-radius: 5px;
+    position: fixed;
+    background-color: #100901;
+    transition: 0.5s;
+    padding-bottom: 20px;
 }
 .header-wrapper {
     width: 100%;
@@ -42,15 +60,6 @@ cards-wrapper{
     border-color: #212529; !important;
 }
 
-.side-navbar {
-    width: 180px;
-    height: 100%;
-    position: fixed;
-    margin-left: -300px;
-    background-color: #100901;
-    transition: 0.5s;
-}
-
 .nav-link:active,
 .nav-link:focus,
 .nav-link:hover {
@@ -59,6 +68,7 @@ cards-wrapper{
 
 .my-container {
     transition: 0.4s;
+    height: 85vh;
 }
 
 .active-nav {
@@ -67,4 +77,9 @@ cards-wrapper{
 
 active-cont {
     margin-left: 180px;
+}
+.alert {
+    list-style-type: none;
+    line-height: 1rem;
+    margin-bottom: 0px; !important;
 }

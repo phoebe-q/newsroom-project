@@ -10,7 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import events.EventProcessor;
-import events.Crawl;
+import events.SearchYoutube;
+import events.StartSearch;
+import events.StartTopicModelling;
+import structures.TopicArticle;
+import structures.TopicSubtitle;
 import play.libs.Json;
 import structures.AppState;
 
@@ -34,6 +38,9 @@ public class WebSocketActor extends AbstractActor {
 
         this.out = out;
         eventProcessors = new HashMap<String,EventProcessor>();
+        eventProcessors.put("startSearch", new StartSearch());
+        eventProcessors.put("searchYoutube", new SearchYoutube());
+        eventProcessors.put("topicModelStart", new StartTopicModelling());
 
         // Initalize a new game state object
         appState = new AppState();
@@ -54,15 +61,7 @@ public class WebSocketActor extends AbstractActor {
                 .match(JsonNode.class, message -> {
                     System.out.println(message);
                     try {
-                        ObjectNode readyMessage = Json.newObject();
-                        readyMessage.put("messagetype", message.get("messagetype").asText());
-                        if(message.get("messagetype").asText().equals("searchTerm") || message.get("messagetype").asText().equals("yt-searchTerm")) {
-                            readyMessage.put("searchTerm", message.get("searchTerm").asText());
-                        } else if (message.get("messagetype").asText().equals("viewResult")){
-                            readyMessage.put("result", message.get("result"));
-                        }
                         processMessage(message.get("messagetype").asText(), message);
-                        out.tell(readyMessage, out);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

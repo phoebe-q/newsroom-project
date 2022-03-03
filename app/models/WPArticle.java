@@ -8,15 +8,16 @@ import play.mvc.QueryStringBindable;
 import java.io.Serializable;
 import java.util.*;
 
-public class WPArticle implements QueryStringBindable<WPArticle>, Serializable {
-    private static final long serialVersionUID = 7860293794078412243L;
+public class WPArticle {
 
     public String id;
     public String article_url;
     public String title;
     public String author;
     public long published_date;
-    public List<Content> contents;
+    public String category;
+    public String contents;
+    public Image image;
     public String type;
     public String source;
 
@@ -24,14 +25,16 @@ public class WPArticle implements QueryStringBindable<WPArticle>, Serializable {
 
     }
 
-    public WPArticle(String id, String article_url, String title, String author, long published_date, List<Content> contents, String type, String source){
+    public WPArticle(String id, String article_url, String title, String author, long published_date, String category, String contents, Image image, String type, String source){
         super();
         this.id = id;
         this.article_url = article_url;
         this.title = title;
         this.author = author;
         this.published_date = published_date;
+        this.category = category;
         this.contents = contents;
+        this.image = image;
         this.type = type;
         this.source = source;
     }
@@ -67,11 +70,25 @@ public class WPArticle implements QueryStringBindable<WPArticle>, Serializable {
         this.published_date = published_date;
     }
 
-    public List<Content> getContents() {
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getContents() {
         return contents;
     }
-    public void setContents(List<Content> contents) {
+    public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public String getType() { return type; }
@@ -80,7 +97,7 @@ public class WPArticle implements QueryStringBindable<WPArticle>, Serializable {
     public String getSource() { return source; }
     public void setSource(String source) { this.source = source; }
 
-    @Override
+    /*@Override
     public Optional<WPArticle> bind(String key, java.util.Map<String, String[]> params) {
         List<Content> cL = new Gson().fromJson(params.get("contents")[0], List.class);
         try {
@@ -109,5 +126,5 @@ public class WPArticle implements QueryStringBindable<WPArticle>, Serializable {
     public String javascriptUnbind() {
         return null;
     }
-
+*/
 }
