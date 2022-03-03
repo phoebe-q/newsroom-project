@@ -18,10 +18,10 @@ public class TopicArticle {
         this.topicId = topicId;
     }
 
-    public WPArticle getTopicText() {
+    public WPArticle getArticle() {
         return article;
     }
-    public void setTopicText(WPArticle article) {
+    public void setArticle(WPArticle article) {
         this.article = article;
     }
 }

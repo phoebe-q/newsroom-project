@@ -83,7 +83,7 @@ public class ArticleController extends Controller {
         BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
         ObjectMapper objectMapper = new ObjectMapper();
 
-        IndexRequest indexRequest = new IndexRequest("washington-post-articles");
+        IndexRequest indexRequest = new IndexRequest("post-washington");
         for (int i =0; i < 5000; i++) {
             try {
                 String line = reader.readLine();
@@ -98,7 +98,7 @@ public class ArticleController extends Controller {
                     } else if (Objects.equals(c.getType(), "image")) {
                         image = new Image(c.getFullcaption(), c.getImageURL(), c.getMime(), c.getImageHeight(), c.getImageWidth(), c.getType(), c.getBlurb());
                     } else if (Objects.equals(c.getSubtype(), "paragraph")) {
-                        contentBuilder.append(c.getContent());
+                        contentBuilder.append(" <br/> ").append(c.getContent());
                     }
                 }
                 String contents = Jsoup.parse(contentBuilder.toString()).text();
@@ -224,8 +224,9 @@ public class ArticleController extends Controller {
         for(SearchResult result: results){
             ResourceId resourceId = result.getId();
             String videoId = resourceId.getVideoId();
+            String videoTitle = result.getSnippet().getTitle();
 
-            Subtitle sub = downloadCaptions(videoId, i);
+            Subtitle sub = downloadCaptions(videoId,videoTitle, i);
             captionsList.add(sub);
             i++;
         }
@@ -233,7 +234,7 @@ public class ArticleController extends Controller {
         return captionsList;
     }
 
-    public Subtitle downloadCaptions(String id, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
+    public Subtitle downloadCaptions(String id, String videoTitle, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
         // Video url to download
         String videoUrl = "https://www.youtube.com/watch?v=" + id;
         // Destination directory
@@ -250,7 +251,7 @@ public class ArticleController extends Controller {
         // Make request and return response
         YoutubeDLResponse response = YoutubeDL.execute(request);
 
-        Subtitle sub = new Subtitle(id, parseVtt(i));
+        Subtitle sub = new Subtitle(id, videoTitle, parseVtt(i));
         return sub;
         // Response
         //String stdOut = response.getOut(); // Executable output
@@ -367,7 +368,7 @@ public class ArticleController extends Controller {
                     listNumber = i2 + 1;
                 }
             }
-            Subtitle subtitle = new Subtitle((captionsList.get(i)).getVideoId(), textList.get(i));
+            Subtitle subtitle = new Subtitle((captionsList.get(i)).getVideoId(), (captionsList.get(i)).getVideoTitle(), textList.get(i));
             TopicSubtitle topicStruct = new TopicSubtitle(listNumber, subtitle);
             topicSortedSubtitles.add(topicStruct);
         }

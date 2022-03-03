@@ -103,18 +103,23 @@ public class StartTopicModelling implements EventProcessor{
         InstanceList instances = returnInstances(textList);
         ParallelTopicModel model = getModel(instances);
 
+        // its not getting the correct dist because it is only doing it from topic articles I think
         List<TopicArticle> topicSortedText = new ArrayList<>();
         for(int i = 0; i < textList.size(); i++) {
             double[] topicDistribution = model.getTopicProbabilities(i);
 
+            for (double tD: topicDistribution) {
+                System.out.println(i +": " +tD);
+            }
             double topDistribution = 0;
             int listNumber = 0;
-            for (int i2 = 0; i2 < topicDistribution.length; i2++) {
+            for (int i2 = 1; i2 < topicDistribution.length; i2++) {
                 if (topicDistribution[i2] > topDistribution) {
                     topDistribution = topicDistribution[i2];
                     listNumber = i2 + 1;
                 }
             }
+            System.out.println(listNumber + "\n \n" );
             TopicArticle topicStruct = new TopicArticle(listNumber, results.get(i));
             topicSortedText.add(topicStruct);
         }
@@ -142,7 +147,7 @@ public class StartTopicModelling implements EventProcessor{
                     listNumber = i2 + 1;
                 }
             }
-            Subtitle subtitle = new Subtitle((captionsList.get(i)).getVideoId(), textList.get(i));
+            Subtitle subtitle = new Subtitle((captionsList.get(i)).getVideoId(), (captionsList.get(i)).getVideoTitle(), textList.get(i));
             TopicSubtitle topicStruct = new TopicSubtitle(listNumber, subtitle);
             topicSortedSubtitles.add(topicStruct);
         }

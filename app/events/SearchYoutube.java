@@ -114,7 +114,7 @@ public class SearchYoutube implements EventProcessor{
         YouTube.Search.List request = youtubeService.search()
                 .list(snippet);
         SearchListResponse response = request.setChannelId("UC16niRr50-MSBwiO3YDb3RA") //channel id for BBCNews
-                .setMaxResults(5L)
+                .setMaxResults(25L)
                 .setQ(searchTerm)
                 .setType(video)
                 .setVideoCaption("closedCaption")
@@ -128,8 +128,9 @@ public class SearchYoutube implements EventProcessor{
         for(SearchResult result: results){
             ResourceId resourceId = result.getId();
             String videoId = resourceId.getVideoId();
+            String videoTitle = result.getSnippet().getTitle();
 
-            Subtitle sub = downloadCaptions(videoId, i);
+            Subtitle sub = downloadCaptions(videoId, videoTitle, i);
             captionsList.add(sub);
             i++;
         }
@@ -137,7 +138,7 @@ public class SearchYoutube implements EventProcessor{
         return captionsList;
     }
 
-    public Subtitle downloadCaptions(String id, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
+    public Subtitle downloadCaptions(String id, String videoTitle, int i) throws GeneralSecurityException, IOException, YoutubeDLException {
         // Video url to download
         String videoUrl = "https://www.youtube.com/watch?v=" + id;
         // Destination directory
@@ -154,7 +155,7 @@ public class SearchYoutube implements EventProcessor{
         // Make request and return response
         YoutubeDLResponse response = YoutubeDL.execute(request);
 
-        Subtitle sub = new Subtitle(id, parseVtt(i));
+        Subtitle sub = new Subtitle(id, videoTitle, parseVtt(i));
         return sub;
         // Response
         //String stdOut = response.getOut(); // Executable output

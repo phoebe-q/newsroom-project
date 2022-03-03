@@ -16,10 +16,8 @@ public class TopicSubtitle {
         this.topicId = topicId;
     }
 
-    public Subtitle getTopicText() {
-        return topicSubtitle;
-    }
-    public void setTopicText(Subtitle topicSubtitle) {
+    public Subtitle getTopicSubtitle() { return topicSubtitle; }
+    public void setTopicSubtitle(Subtitle topicSubtitle) {
         this.topicSubtitle = topicSubtitle;
     }
 }
