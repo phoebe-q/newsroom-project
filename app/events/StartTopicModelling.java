@@ -37,25 +37,25 @@ public class StartTopicModelling implements EventProcessor{
 
         List<String> topicModellingText = new ArrayList<>();
         List<WPArticle> results = siteState.newsResults;
-        List<Subtitle> subtitlesList = siteState.youtubeResults;
+        //List<Subtitle> subtitlesList = siteState.youtubeResults;
         for(WPArticle result: results){
             topicModellingText.add(result.contents);
         }
 
         siteState.modelledTopics = topicWordsList(topicModellingText);
         siteState.sortedNewsResults = topicSortedText(results);
-        siteState.sortedYoutubeResults = topicSortedSubtitles(subtitlesList);
+       // siteState.sortedYoutubeResults = topicSortedSubtitles(subtitlesList);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode topics = mapper.valueToTree(siteState.modelledTopics);
         JsonNode news = mapper.valueToTree(siteState.sortedNewsResults);
-        JsonNode subtitles = mapper.valueToTree(siteState.sortedYoutubeResults);
+        //JsonNode subtitles = mapper.valueToTree(siteState.sortedYoutubeResults);
 
         {ObjectNode m = Json.newObject();
             m.put("messagetype", "modellingComplete");
             m.put("topics", topics);
             m.put("newsData", news);
-            m.put("subtitlesData", subtitles);
+            //m.put("subtitlesData", subtitles);
             out.tell(m, out);}
     }
 

@@ -322,3 +322,37 @@
 ### 27 Jan 2022
 
 - _3 hours_ Tried to implement Subtitles work around, however GET requests returns nothing - think this method has deprecated
+
+## Week 18
+
+### 31 Jan 2022
+
+## Week 19
+
+### 7 Feb 2022
+
+## Week 20
+
+### 14 Feb 2022
+
+### 15 Feb 2022
+- Had to move weekly meeting with Richard due to hurting my back and being unable to sit or stand - also stalled development by a couple of days.
+
+### 18 Feb 2022
+- _1 hour_ - Met with Richard for our weekly session - we discussed changing the application to be single page to make processes more visible to the user.
+
+## Week 21
+
+### 21 Feb 2022
+
+## Week 22
+
+### 28 Feb 2022
+
+### 5 March 2022
+- _1 hour_ - Fixed issue with subtitles not matching the correct video. Had to make sure all files deleted after use and changed .vtt file to have title of videoID rather than integer to make it easier to match.
+- _3 hours_ - Fixed .vtt file parsing using regex to make sure none of the timings or extra details are included in the parsed text used in cards.
+
+## Week 23
+
+### 7 March 2022

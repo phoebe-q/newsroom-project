@@ -66,10 +66,10 @@
                             messagetype: "startSearch",
                             searchTerm: searchTerm,
                         }));
-                        ws.send(JSON.stringify({
-                            messagetype: "searchYoutube",
-                            searchTerm: searchTerm,
-                        }));
+                        //ws.send(JSON.stringify({
+                          //  messagetype: "searchYoutube",
+                            //searchTerm: searchTerm,
+                        //}));
                     }
 
                     function addAlert(mess) {
@@ -113,7 +113,7 @@
                                 card.className = "card";
                                 card.innerHTML = "<div class='card-body'>" +
                                         "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + subtitlesData[i]["topicSubtitle"]["videoTitle"] + "</h5>" +
-                                        "<h6 class='card-subtitle mb-2 text-muted'>" + 'From the BBC' + "</h6>" +
+                                        "<h6 class='card-subtitle mb-2 text-muted'>" + 'From the Washington Post' + "</h6>" +
                                         "<div class='collapse' id='content"+i+"'>" +
                                         "<div style='float: right; clear: right; margin-left: 5px'>" +
                                         "<iframe width='420' height='300' align='right' src='https://www.youtube.com/embed/"+ subtitlesData[i]["topicSubtitle"]["videoId"] +"'>" + "</iframe>" +
@@ -168,8 +168,14 @@
                                     }));
                                     break;
                                 case "modellingComplete":
-                                    populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
+                                    ws.send(JSON.stringify({
+                                        messagetype: "searchYoutube",
+                                        searchTerm: message.topics,
+                                        news: message.newsData,
+                                    }));
                                     break;
+                                case "youtubeSearchComplete":
+                                    populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
                                 case "searchTerm":
                                     console.log("searching...");
                                     console.log(message.searchTerm);

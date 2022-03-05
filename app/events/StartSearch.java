@@ -58,5 +58,9 @@ public class StartSearch implements EventProcessor {
             alert.put("text", "Articles Search Complete");
             out.tell(alert, out);}
 
+        {ObjectNode m = Json.newObject();
+            m.put("messagetype", "searchComplete");
+            out.tell(m, out);}
+
     }
 }
