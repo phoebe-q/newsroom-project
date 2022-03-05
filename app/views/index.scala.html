@@ -87,14 +87,29 @@
                             if (newsData[i]["topicId"] === count+1) {
                                 const card = document.createElement('div');
                                 card.className = "card";
-                                card.innerHTML = "<div class='card-body'>" +
-                                        "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
-                                        "<h6 class='card-subtitle mb-2 text-muted'>" + newsData[i]["article"]["author"] + "</h6>" +
-                                        "<div class='collapse' id='content"+i+"'>" +
-                                        "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
-                                        "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
-                                        "</div>" +
-                                        "</div>";
+
+                                if (newsData[i]["article"]["image"]["imageURL"] != null) {
+                                    card.innerHTML = "<div class='card-body'>" +
+                                            "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
+                                            "<h6 class='card-subtitle mb-2 text-muted'>" + newsData[i]["article"]["author"] + "</h6>" +
+                                            "<div class='collapse' id='content"+i+"'>" +
+                                            "<div style='float: right; clear: right; margin-left: 5px'>" +
+                                            "<img src='" + newsData[i]["article"]["image"]["imageURL"] + "' alt='" + newsData[i]["article"]["image"]["fullcaption"] + "' width='420' height='300'>" +
+                                            "</div>" +
+                                            "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
+                                            "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
+                                            "</div>" +
+                                            "</div>";
+                                } else {
+                                    card.innerHTML = "<div class='card-body'>" +
+                                            "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
+                                            "<h6 class='card-subtitle mb-2 text-muted'>" + newsData[i]["article"]["author"] + "</h6>" +
+                                            "<div class='collapse' id='content"+i+"'>" +
+                                            "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
+                                            "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
+                                            "</div>" +
+                                            "</div>";
+                                }
 
                                 insertPoint.appendChild(card);
                             }

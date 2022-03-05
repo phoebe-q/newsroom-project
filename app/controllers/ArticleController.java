@@ -49,7 +49,7 @@ public class ArticleController extends Controller {
                     } else if (Objects.equals(c.getType(), "image")) {
                         image = new Image(c.getFullcaption(), c.getImageURL(), c.getMime(), c.getImageHeight(), c.getImageWidth(), c.getType(), c.getBlurb());
                     } else if (Objects.equals(c.getSubtype(), "paragraph")) {
-                        contentBuilder.append(c.getContent()).append(System.getProperty("line.separator"));
+                        contentBuilder.append(c.getContent()).append("\n");
                     }
                 }
                 String contents = Jsoup.parse(contentBuilder.toString()).text();

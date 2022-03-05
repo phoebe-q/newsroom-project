@@ -354,6 +354,7 @@
 - _3 hours_ - Fixed .vtt file parsing using regex to make sure none of the timings or extra details are included in the parsed text used in cards.
 - _0.5 hours_ - Refactored code base to remove unneeded views, routes and classes in controllers
 - _3.5 hours_ - Fixed topic modelling issue of sorted text not matching correct topic
+- _1 hour_ - Added images to article view, tried to repopulate database with newline between paragraphs did not work will have to try a different approach
 
 ## Week 23
 
