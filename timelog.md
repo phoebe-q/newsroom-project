@@ -352,7 +352,8 @@
 ### 5 March 2022
 - _1 hour_ - Fixed issue with subtitles not matching the correct video. Had to make sure all files deleted after use and changed .vtt file to have title of videoID rather than integer to make it easier to match.
 - _3 hours_ - Fixed .vtt file parsing using regex to make sure none of the timings or extra details are included in the parsed text used in cards.
-- _0.5 hours_ Refactored code base to remove unneeded views, routes and classes in controllers
+- _0.5 hours_ - Refactored code base to remove unneeded views, routes and classes in controllers
+- _3.5 hours_ - Fixed topic modelling issue of sorted text not matching correct topic
 
 ## Week 23
 
