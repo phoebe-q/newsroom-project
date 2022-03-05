@@ -4,9 +4,8 @@ import akka.actor.ActorRef;
 import cc.mallet.pipe.*;
 import cc.mallet.pipe.iterator.ArrayIterator;
 import cc.mallet.topics.ParallelTopicModel;
-import cc.mallet.types.Alphabet;
-import cc.mallet.types.IDSorter;
-import cc.mallet.types.InstanceList;
+import cc.mallet.topics.TopicInferencer;
+import cc.mallet.types.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -42,8 +41,8 @@ public class StartTopicModelling implements EventProcessor{
             topicModellingText.add(result.contents);
         }
 
-        siteState.modelledTopics = topicWordsList(topicModellingText);
-        siteState.sortedNewsResults = topicSortedText(results);
+        siteState.modelledTopics = topicWordsList(topicModellingText, siteState);
+        siteState.sortedNewsResults = topicSortedText(results, siteState);
        // siteState.sortedYoutubeResults = topicSortedSubtitles(subtitlesList);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -95,25 +94,33 @@ public class StartTopicModelling implements EventProcessor{
         return model;
     }
 
-    public List<TopicArticle> topicSortedText(List<WPArticle> results) throws IOException {
+    public List<TopicArticle> topicSortedText(List<WPArticle> results, AppState siteState) throws IOException {
         List<String> textList = new ArrayList<>();
         for(WPArticle result: results){
             textList.add(result.contents);
         }
-        InstanceList instances = returnInstances(textList);
-        ParallelTopicModel model = getModel(instances);
+        //InstanceList instances = returnInstances(textList);
+        //ParallelTopicModel model = getModel(instances);
+        // The data alphabet maps word IDs to strings
 
         // its not getting the correct dist because it is only doing it from topic articles I think
         List<TopicArticle> topicSortedText = new ArrayList<>();
         for(int i = 0; i < textList.size(); i++) {
-            double[] topicDistribution = model.getTopicProbabilities(i);
+            //double[] topicDistribution = siteState.createdModel.getTopicProbabilities(i);
 
+            TopicInferencer inferencer = siteState.createdModel.getInferencer();
+            double[] topicDistribution = inferencer.getSampledDistribution(siteState.instances.get(i), 10, 1, 5);
+            //for (double tP: testProbabilities) {
+              //  System.out.println("test prob is: " + tP );
+            //}
+            //System.out.println("\n");
             for (double tD: topicDistribution) {
                 System.out.println(i +": " +tD);
             }
+
             double topDistribution = 0;
             int listNumber = 0;
-            for (int i2 = 1; i2 < topicDistribution.length; i2++) {
+            for (int i2 = 0; i2 < topicDistribution.length; i2++) {
                 if (topicDistribution[i2] > topDistribution) {
                     topDistribution = topicDistribution[i2];
                     listNumber = i2 + 1;
@@ -122,11 +129,12 @@ public class StartTopicModelling implements EventProcessor{
             System.out.println(listNumber + "\n \n" );
             TopicArticle topicStruct = new TopicArticle(listNumber, results.get(i));
             topicSortedText.add(topicStruct);
+
         }
         return topicSortedText;
     }
 
-    public List<TopicSubtitle> topicSortedSubtitles(List<Subtitle> captionsList) throws IOException {
+    /*public List<TopicSubtitle> topicSortedSubtitles(List<Subtitle> captionsList) throws IOException {
         List<String> textList = new ArrayList<>();
         for(Subtitle sub: captionsList) {
             textList.add(sub.getSubtitleText());
@@ -153,21 +161,22 @@ public class StartTopicModelling implements EventProcessor{
         }
         return topicSortedSubtitles;
     }
+     */
 
-    public List<List<String>> topicWordsList(List<String> textList) throws IOException {
-        InstanceList instances = returnInstances(textList);
-        ParallelTopicModel model = getModel(instances);
+    public List<List<String>> topicWordsList(List<String> textList, AppState siteState) throws IOException {
+        //InstanceList instances = returnInstances(textList);
+        siteState.instances = returnInstances(textList);
+        siteState.createdModel = getModel(siteState.instances);
 
-        Alphabet dataAlphabet = instances.getDataAlphabet();
-        ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
+        Alphabet dataAlphabet = siteState.instances.getDataAlphabet();
+        ArrayList<TreeSet<IDSorter>> topicSortedWords = siteState.createdModel.getSortedWords();
         List<List<String>> topicWordsList = new ArrayList<>();
         int numTopics = 5;
         // Show top 5 words in topics with proportions for the first document
         for (int topic = 0; topic < numTopics; topic++) {
             Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
             ArrayList<String> topicWords = new ArrayList<>();
-            //out = new Formatter(new StringBuilder(), Locale.US);
-            //out.format("%d\t%.3f\t", topic, topicDistribution[topic]);
+
             int rank = 0;
             while (iterator.hasNext() && rank < 5) {
                 IDSorter idCountPair = iterator.next();

@@ -40,7 +40,7 @@ public class StartSearch implements EventProcessor {
                 ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(600000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
         QueryBuilder query = QueryBuilders.termsQuery("contents", queryTerms);
-        SearchRequest searchRequest = new SearchRequest("post-washington");
+        SearchRequest searchRequest = new SearchRequest("washington-post");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);

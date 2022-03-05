@@ -34,8 +34,8 @@ public class ArticleController extends Controller {
         BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
         ObjectMapper objectMapper = new ObjectMapper();
 
-        IndexRequest indexRequest = new IndexRequest("post-washington");
-        for (int i = 0; i < 5000; i++) {
+        IndexRequest indexRequest = new IndexRequest("washington-post");
+        for (int i = 0; i < 8000; i++) {
             try {
                 String line = reader.readLine();
                 WPArticleIn article = objectMapper.readValue(line, WPArticleIn.class);
@@ -49,7 +49,7 @@ public class ArticleController extends Controller {
                     } else if (Objects.equals(c.getType(), "image")) {
                         image = new Image(c.getFullcaption(), c.getImageURL(), c.getMime(), c.getImageHeight(), c.getImageWidth(), c.getType(), c.getBlurb());
                     } else if (Objects.equals(c.getSubtype(), "paragraph")) {
-                        contentBuilder.append(" <br/> ").append(c.getContent());
+                        contentBuilder.append(c.getContent()).append(System.getProperty("line.separator"));
                     }
                 }
                 String contents = Jsoup.parse(contentBuilder.toString()).text();
@@ -57,8 +57,10 @@ public class ArticleController extends Controller {
                 String upload_string = objectMapper.writeValueAsString(formatted_article);
 
                 indexRequest.source(upload_string, XContentType.JSON);
-                IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-                System.out.println(response.getResult());
+                if (article.getTitle() != null) {
+                    IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+                    System.out.println(response.getResult());
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();

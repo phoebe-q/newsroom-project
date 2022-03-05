@@ -59,7 +59,6 @@ public class WebSocketActor extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
                 .match(JsonNode.class, message -> {
-                    System.out.println(message);
                     try {
                         processMessage(message.get("messagetype").asText(), message);
                     } catch (Exception e) {

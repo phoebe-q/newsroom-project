@@ -66,10 +66,6 @@
                             messagetype: "startSearch",
                             searchTerm: searchTerm,
                         }));
-                        //ws.send(JSON.stringify({
-                          //  messagetype: "searchYoutube",
-                            //searchTerm: searchTerm,
-                        //}));
                     }
 
                     function addAlert(mess) {
@@ -168,14 +164,17 @@
                                     }));
                                     break;
                                 case "modellingComplete":
-                                    ws.send(JSON.stringify({
-                                        messagetype: "searchYoutube",
-                                        searchTerm: message.topics,
-                                        news: message.newsData,
-                                    }));
+                                    populateTopicsMenu(message.topics, message.newsData, message?.subtitlesData);
+                                    // commenting out because I hit the daily quota
+                                    //ws.send(JSON.stringify({
+                                      //  messagetype: "searchYoutube",
+                                        //searchTerm: message.topics,
+                                        //news: message.newsData,
+                                    //}));
                                     break;
                                 case "youtubeSearchComplete":
-                                    populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
+                                    // commenting out because I hit the daily quota
+                                    // populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
                                 case "searchTerm":
                                     console.log("searching...");
                                     console.log(message.searchTerm);
