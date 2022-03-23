@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.WPArticle;
+import org.jsoup.Jsoup;
 import play.libs.Json;
 import structures.AppState;
 import structures.Subtitle;
@@ -36,25 +37,33 @@ public class StartTopicModelling implements EventProcessor{
 
         List<String> topicModellingText = new ArrayList<>();
         List<WPArticle> results = siteState.newsResults;
-        //List<Subtitle> subtitlesList = siteState.youtubeResults;
+        List<Subtitle> subtitlesList = siteState.youtubeResults;
+        int resultsLen = results.size();
         for(WPArticle result: results){
-            topicModellingText.add(result.contents);
+            topicModellingText.add(Jsoup.parse(result.contents).text());
         }
+        for(Subtitle sub: subtitlesList) {
+            topicModellingText.add(sub.getSubtitleText());
+        }
+
 
         siteState.modelledTopics = topicWordsList(topicModellingText, siteState);
         siteState.sortedNewsResults = topicSortedText(results, siteState);
-       // siteState.sortedYoutubeResults = topicSortedSubtitles(subtitlesList);
+        siteState.sortedYoutubeResults = topicSortedSubtitles(subtitlesList, siteState, resultsLen);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode topics = mapper.valueToTree(siteState.modelledTopics);
         JsonNode news = mapper.valueToTree(siteState.sortedNewsResults);
-        //JsonNode subtitles = mapper.valueToTree(siteState.sortedYoutubeResults);
-
+        JsonNode subtitles = mapper.valueToTree(siteState.sortedYoutubeResults);
+        {ObjectNode alert = Json.newObject();
+            alert.put("messagetype", "alert");
+            alert.put("text", "Modelling Topics Finished...");
+            out.tell(alert, out);}
         {ObjectNode m = Json.newObject();
             m.put("messagetype", "modellingComplete");
             m.put("topics", topics);
             m.put("newsData", news);
-            //m.put("subtitlesData", subtitles);
+            m.put("subtitlesData", subtitles);
             out.tell(m, out);}
     }
 
@@ -97,7 +106,8 @@ public class StartTopicModelling implements EventProcessor{
     public List<TopicArticle> topicSortedText(List<WPArticle> results, AppState siteState) throws IOException {
         List<String> textList = new ArrayList<>();
         for(WPArticle result: results){
-            textList.add(result.contents);
+            textList.add(Jsoup.parse(result.contents).text());
+            System.out.println("Results contents : " + result.title + "\n");
         }
         //InstanceList instances = returnInstances(textList);
         //ParallelTopicModel model = getModel(instances);
@@ -105,18 +115,12 @@ public class StartTopicModelling implements EventProcessor{
 
         // its not getting the correct dist because it is only doing it from topic articles I think
         List<TopicArticle> topicSortedText = new ArrayList<>();
+        TopicInferencer inferencer = siteState.createdModel.getInferencer();
         for(int i = 0; i < textList.size(); i++) {
             //double[] topicDistribution = siteState.createdModel.getTopicProbabilities(i);
 
-            TopicInferencer inferencer = siteState.createdModel.getInferencer();
+            //TopicInferencer inferencer = siteState.createdModel.getInferencer();
             double[] topicDistribution = inferencer.getSampledDistribution(siteState.instances.get(i), 10, 1, 5);
-            //for (double tP: testProbabilities) {
-              //  System.out.println("test prob is: " + tP );
-            //}
-            //System.out.println("\n");
-            for (double tD: topicDistribution) {
-                System.out.println(i +": " +tD);
-            }
 
             double topDistribution = 0;
             int listNumber = 0;
@@ -126,26 +130,26 @@ public class StartTopicModelling implements EventProcessor{
                     listNumber = i2 + 1;
                 }
             }
-            System.out.println(listNumber + "\n \n" );
             TopicArticle topicStruct = new TopicArticle(listNumber, results.get(i));
-            topicSortedText.add(topicStruct);
 
+            topicSortedText.add(topicStruct);
         }
         return topicSortedText;
     }
 
-    /*public List<TopicSubtitle> topicSortedSubtitles(List<Subtitle> captionsList) throws IOException {
+    public List<TopicSubtitle> topicSortedSubtitles(List<Subtitle> captionsList, AppState siteState, int resultsLen) throws IOException {
         List<String> textList = new ArrayList<>();
         for(Subtitle sub: captionsList) {
             textList.add(sub.getSubtitleText());
         }
 
         InstanceList instances = returnInstances(textList);
-        ParallelTopicModel model = getModel(instances);
+        TopicInferencer inferencer = siteState.createdModel.getInferencer();
 
         List<TopicSubtitle> topicSortedSubtitles = new ArrayList<>();
         for(int i = 0; i < textList.size(); i++) {
-            double[] topicDistribution = model.getTopicProbabilities(i);
+            //double[] topicDistribution = model.getTopicProbabilities(i);
+            double[] topicDistribution = inferencer.getSampledDistribution(siteState.instances.get(resultsLen+i), 10, 1, 5);
 
             double topDistribution = 0;
             int listNumber = 0;
@@ -155,13 +159,13 @@ public class StartTopicModelling implements EventProcessor{
                     listNumber = i2 + 1;
                 }
             }
-            Subtitle subtitle = new Subtitle((captionsList.get(i)).getVideoId(), (captionsList.get(i)).getVideoTitle(), textList.get(i));
-            TopicSubtitle topicStruct = new TopicSubtitle(listNumber, subtitle);
+            //Subtitle subtitle = new Subtitle((captionsList.get(i)).getVideoId(), (captionsList.get(i)).getVideoTitle(), textList.get(i));
+            //TopicSubtitle topicStruct = new TopicSubtitle(listNumber, subtitle);
+            TopicSubtitle topicStruct = new TopicSubtitle(listNumber, captionsList.get(i));
             topicSortedSubtitles.add(topicStruct);
         }
         return topicSortedSubtitles;
     }
-     */
 
     public List<List<String>> topicWordsList(List<String> textList, AppState siteState) throws IOException {
         //InstanceList instances = returnInstances(textList);
@@ -185,7 +189,6 @@ public class StartTopicModelling implements EventProcessor{
                 rank++;
             }
             topicWordsList.add(topicWords);
-            //System.out.println(topicsList);
         }
         return topicWordsList;
     }

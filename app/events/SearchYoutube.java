@@ -49,25 +49,30 @@ public class SearchYoutube implements EventProcessor{
 
         ObjectMapper mapper = new ObjectMapper();
 
-        ObjectReader reader = mapper.readerFor(new TypeReference<List<List<String>>>() {});
-        List<List<String>> queryTerms = reader.readValue(message.get("searchTerm"));
+        String queryTerms = message.get("searchTerm").asText();
 
-        List<TopicSubtitle> youtubeResults = searchYT(queryTerms);
-        siteState.sortedYoutubeResults = youtubeResults;
-        JsonNode subtitles = mapper.valueToTree(siteState.sortedYoutubeResults);
+        List<Subtitle> youtubeResults = searchYT(queryTerms);
+        siteState.youtubeResults = youtubeResults;
+        JsonNode subtitles = mapper.valueToTree(siteState.youtubeResults);
         {
             ObjectNode alert = Json.newObject();
             alert.put("messagetype", "alert");
             alert.put("text", "Youtube Search Complete");
-            out.tell(alert, out);}
+            out.tell(alert, out);
+        }
+        if (siteState.newsResults != null && siteState.youtubeResults != null) {
+            {ObjectNode m = Json.newObject();
+                m.put("messagetype", "searchComplete");
+                out.tell(m, out);}
+        }
         //if (siteState.newsResults != null && siteState.youtubeResults != null) {
-        {ObjectNode m = Json.newObject();
-            m.put("messagetype", "youtubeSearchComplete");
-            m.put("topics", message.get("searchTerm"));
-            m.put("newsData", message.get("news"));
-            m.put("subtitlesData", subtitles);
+        //{ObjectNode m = Json.newObject();
+          //  m.put("messagetype", "youtubeSearchComplete");
+            //m.put("topics", message.get("searchTerm"));
+            //m.put("newsData", message.get("news"));
             //m.put("subtitlesData", subtitles);
-            out.tell(m, out);}
+            //m.put("subtitlesData", subtitles);
+            //out.tell(m, out);}
         //}
     }
 
@@ -118,7 +123,7 @@ public class SearchYoutube implements EventProcessor{
      *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public List<TopicSubtitle> searchYT(List<List<String>> searchTermsList) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
+    public List<Subtitle> searchYT(String searchTerm) throws GeneralSecurityException, IOException, GoogleJsonResponseException, YoutubeDLException {
         // Clear directory of previous captions
         FileUtils.cleanDirectory(new File("/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/app/assets/youtube/"));
 
@@ -126,36 +131,32 @@ public class SearchYoutube implements EventProcessor{
         List<String> snippet = Arrays.asList("id,snippet");
         List<String> video = Arrays.asList("video");
 
-        List<TopicSubtitle> topicSortedSubtitles = new ArrayList<>();
 
-        for (int index = 0; index < searchTermsList.size(); index++) {
             // Define and execute the API request
 
-            YouTube.Search.List request = youtubeService.search()
-                    .list(snippet);
-            SearchListResponse response = request.setChannelId("UCHd62-u_v4DvJ8TCFtpi4GA") //channel id for Washington Post
-                    .setMaxResults(5L)
-                    .setQ(String.valueOf(searchTermsList.get(index)))
-                    .setType(video)
-                    .setVideoCaption("closedCaption")
-                    .setVideoDimension("2d")
-                    .setVideoEmbeddable("true")
-                    .execute();
-            List<SearchResult> results = new ArrayList<>(response.getItems());
+        YouTube.Search.List request = youtubeService.search()
+                .list(snippet);
+        SearchListResponse response = request.setChannelId("UCHd62-u_v4DvJ8TCFtpi4GA") //channel id for Washington Post
+                .setMaxResults(5L)
+                .setQ(searchTerm)
+                .setType(video)
+                .setVideoCaption("closedCaption")
+                .setVideoDimension("2d")
+                .setVideoEmbeddable("true")
+                .execute();
+        List<SearchResult> results = new ArrayList<>(response.getItems());
 
-            for (SearchResult result : results) {
-                ResourceId resourceId = result.getId();
-                String videoId = resourceId.getVideoId();
-                String videoTitle = result.getSnippet().getTitle();
+        List<Subtitle> captionsList = new ArrayList<>();
+        for (SearchResult result : results) {
+            ResourceId resourceId = result.getId();
+            String videoId = resourceId.getVideoId();
+            String videoTitle = result.getSnippet().getTitle();
 
-                Subtitle sub = downloadCaptions(videoId, videoTitle);
-                TopicSubtitle topicStruct = new TopicSubtitle(index + 1, sub);
-                topicSortedSubtitles.add(topicStruct);
-            }
+            Subtitle sub = downloadCaptions(videoId, videoTitle);
+            captionsList.add(sub);
         }
 
-        //List<String> captionsList = parseVtt();
-        return topicSortedSubtitles;
+        return captionsList;
     }
 
     public Subtitle downloadCaptions(String id, String videoTitle) throws GeneralSecurityException, IOException, YoutubeDLException {

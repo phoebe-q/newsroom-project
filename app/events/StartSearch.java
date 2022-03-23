@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class StartSearch implements EventProcessor {
@@ -35,14 +36,17 @@ public class StartSearch implements EventProcessor {
         alert.put("text", "Searching Articles...");
         out.tell(alert, out);}
 
-        String[] queryTerms = message.get("searchTerm").asText().split( " ");
+        String lowercaseTerms = message.get("searchTerm").asText().toLowerCase();
+        //String[] queryTerms = lowercaseTerms.split(" ");
+                //message.get("searchTerm").asText().split( " ");
         ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(600000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
-        QueryBuilder query = QueryBuilders.termsQuery("contents", queryTerms);
+        QueryBuilder query = QueryBuilders.termQuery("title", message.get("searchTerm").asText()); //lowercaseTerms);
         SearchRequest searchRequest = new SearchRequest("washington-post");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
+        searchSourceBuilder.size(25);
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
@@ -57,10 +61,6 @@ public class StartSearch implements EventProcessor {
             alert.put("messagetype", "alert");
             alert.put("text", "Articles Search Complete");
             out.tell(alert, out);}
-
-        {ObjectNode m = Json.newObject();
-            m.put("messagetype", "searchComplete");
-            out.tell(m, out);}
 
     }
 }

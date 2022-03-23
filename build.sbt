@@ -21,6 +21,7 @@ libraryDependencies += "com.alibaba" % "fastjson" % "1.2.79"
 libraryDependencies += "com.google.http-client" % "google-http-client-gson" % "1.41.0"
 libraryDependencies += "com.github.sapher" % "youtubedl-java" % "1.1"
 
+
 libraryDependencies ++= Seq(
   javaJdbc
 )

@@ -10,8 +10,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.xcontent.XContentType;
 
-import org.jsoup.Jsoup;
-
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 
@@ -31,16 +29,18 @@ public class ArticleController extends Controller {
         ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(6000000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
-        BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/TREC_Washington_Post_collection.v3.jl"));
+        BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/nesubset.json"));
         ObjectMapper objectMapper = new ObjectMapper();
 
         IndexRequest indexRequest = new IndexRequest("washington-post");
-        for (int i = 0; i < 8000; i++) {
+
+        String line;
+        while ((line = reader.readLine()) != null) {
             try {
-                String line = reader.readLine();
                 WPArticleIn article = objectMapper.readValue(line, WPArticleIn.class);
 
                 String category = "";
+                long date = 0;
                 Image image = new Image();
                 StringBuilder contentBuilder = new StringBuilder();
                 for (Content c : article.getContents()) {
@@ -49,14 +49,18 @@ public class ArticleController extends Controller {
                     } else if (Objects.equals(c.getType(), "image")) {
                         image = new Image(c.getFullcaption(), c.getImageURL(), c.getMime(), c.getImageHeight(), c.getImageWidth(), c.getType(), c.getBlurb());
                     } else if (Objects.equals(c.getSubtype(), "paragraph")) {
-                        contentBuilder.append(c.getContent()).append("\n");
+                        contentBuilder.append(c.getContent()).append("<br />");
+                    } else if (Objects.equals(c.getType(), "date")) {
+                        date = Long.parseLong(c.getContent());
+                        System.out.println("Date = " + date);
                     }
                 }
-                String contents = Jsoup.parse(contentBuilder.toString()).text();
-                WPArticle formatted_article = new WPArticle(article.getId(), article.getArticleURL(), article.getTitle(), article.getAuthor(), article.getPublishedDate(), category, contents, image, article.getType(), article.getSource());
+                String contents = contentBuilder.toString();
+                WPArticle formatted_article = new WPArticle(article.getId(), article.getArticleURL(), article.getTitle(), article.getAuthor(), date, category, contents, image, article.getType(), article.getSource());
                 String upload_string = objectMapper.writeValueAsString(formatted_article);
 
                 indexRequest.source(upload_string, XContentType.JSON);
+                indexRequest.id(article.getId());
                 if (article.getTitle() != null) {
                     IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
                     System.out.println(response.getResult());

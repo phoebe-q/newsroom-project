@@ -25,12 +25,11 @@
             <h4>Enter the term you want to know more about and hit search to begin!</h4>
         </div>
         <ul id="events" style="display: block"></ul>
+        <div id="no-results" style="display: none"></div>
         <div id="article-container" style="display: none">
             <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
                 <ul class="nav flex-column text-white w-100" id="topics-container">
-                    <a href="#" class="nav-link h5 text-white my-2">
-                        Topics
-                    </a>
+
                 </ul>
             </div>
             <div class="p-1 my-container active-cont">
@@ -48,6 +47,11 @@
 
                     function init() {
                         openWebSocketConnection();
+                        window.setInterval(function () {
+                            ws.send(JSON.stringify({
+                                messagetype: "heartbeat",
+                            }));
+                        }, 3000);
                     }
 
                     function search() {
@@ -55,6 +59,7 @@
                         welcomeMessage.style.display = "none";
 
                         document.getElementById("events").innerHTML = "";
+                        document.getElementById("no-results").innerHTML = "";
 
                         const eventsList = document.getElementById("events");
                         eventsList.style.display = "block";
@@ -66,9 +71,15 @@
                             messagetype: "startSearch",
                             searchTerm: searchTerm,
                         }));
+                        ws.send(JSON.stringify({
+                            messagetype: "searchYoutube",
+                            searchTerm: searchTerm,
+                        }));
                     }
 
                     function addAlert(mess) {
+                        const noResultsContainer = document.getElementById("no-results");
+                        noResultsContainer.style.display = "none";
                         const alert = document.createElement('li')
                         alert.className = "alert";
                         alert.innerHTML =
@@ -86,28 +97,39 @@
                         for (let i = 0; i < newsData.length; i++) {
                             if (newsData[i]["topicId"] === count+1) {
                                 const card = document.createElement('div');
-                                card.className = "card";
+                                let date = new Date(newsData[i]["article"]["published_date"]);
+                                card.className = "card text-white";
 
                                 if (newsData[i]["article"]["image"]["imageURL"] != null) {
-                                    card.innerHTML = "<div class='card-body'>" +
-                                            "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
-                                            "<h6 class='card-subtitle mb-2 text-muted'>" + newsData[i]["article"]["author"] + "</h6>" +
-                                            "<div class='collapse' id='content"+i+"'>" +
-                                            "<div style='float: right; clear: right; margin-left: 5px'>" +
-                                            "<img src='" + newsData[i]["article"]["image"]["imageURL"] + "' alt='" + newsData[i]["article"]["image"]["fullcaption"] + "' width='420' height='300'>" +
-                                            "</div>" +
-                                            "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
-                                            "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
-                                            "</div>" +
+                                    card.innerHTML =
+                                            "<div class='card-body'>" +
+                                                "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
+                                                "<div class='card-subtitle-container'>" +
+                                                    "<h6 class='card-subtitle mb-2'>" + newsData[i]["article"]["author"] + "</h6>" +
+                                                    "<p class='card-subtitle mb-2 text-muted'>" + "Source: Washington Post" + "</p>" +
+                                                    "<p class='card-subtitle mb-2 text-muted'>" + date.toString().slice(0,16) + "</p>" +
+                                                "</div>" +
+                                                "<div class='collapse' id='content"+i+"'>" +
+                                                    "<div style='float: right; clear: right; margin-left: 5px'>" +
+                                                        "<img src='" + newsData[i]["article"]["image"]["imageURL"] + "' alt='" + newsData[i]["article"]["image"]["fullcaption"] + "' width='420' height='300'>" +
+                                                    "</div>" +
+                                                    "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
+                                                    "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
+                                                "</div>" +
                                             "</div>";
                                 } else {
-                                    card.innerHTML = "<div class='card-body'>" +
-                                            "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
-                                            "<h6 class='card-subtitle mb-2 text-muted'>" + newsData[i]["article"]["author"] + "</h6>" +
-                                            "<div class='collapse' id='content"+i+"'>" +
-                                            "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
-                                            "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
-                                            "</div>" +
+                                    card.innerHTML =
+                                            "<div class='card-body'>" +
+                                                "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + newsData[i]["article"]["title"] + "</h5>" +
+                                                "<div class='card-subtitle-container'>" +
+                                                    "<h6 class='card-subtitle mb-2'>" + newsData[i]["article"]["author"] + "</h6>" +
+                                                    "<p class='card-subtitle mb-2 text-muted'>" + "Source: Washington Post" + "</p>" +
+                                                    "<p class='card-subtitle mb-2 text-muted'>" + date.toString().slice(0,16) + "</p>" +
+                                                "</div>" +
+                                                "<div class='collapse' id='content"+i+"'>" +
+                                                    "<p class='card-text'>" + newsData[i]["article"]["contents"] + "</p>" +
+                                                    "<a href='" + newsData[i]["article"]["article_url"] + "' class='card-link'>" + 'View Article Online' + "</a>" +
+                                                "</div>" +
                                             "</div>";
                                 }
 
@@ -121,16 +143,19 @@
                         for (let i = 0; i < subtitlesData.length; i++) {
                             if (subtitlesData[i]["topicId"] === count+1) {
                                 const card = document.createElement('div');
-                                card.className = "card";
-                                card.innerHTML = "<div class='card-body'>" +
-                                        "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + subtitlesData[i]["topicSubtitle"]["videoTitle"] + "</h5>" +
-                                        "<h6 class='card-subtitle mb-2 text-muted'>" + 'From the Washington Post' + "</h6>" +
-                                        "<div class='collapse' id='content"+i+"'>" +
-                                        "<div style='float: right; clear: right; margin-left: 5px'>" +
-                                        "<iframe width='420' height='300' align='right' src='https://www.youtube.com/embed/"+ subtitlesData[i]["topicSubtitle"]["videoId"] +"'>" + "</iframe>" +
-                                        "</div>" +
-                                        "<p class='card-text'>" + subtitlesData[i]["topicSubtitle"]["subtitleText"] + "</p>" +
-                                        "</div>" +
+                                card.className = "card text-white";
+                                card.innerHTML =
+                                        "<div class='card-body'>" +
+                                            "<h5 class='card-title' data-bs-toggle='collapse' data-bs-target='#content"+i+"'>" + subtitlesData[i]["topicSubtitle"]["videoTitle"] + "</h5>" +
+                                            "<div class='card-subtitle-container'>" +
+                                                "<h6 class='card-subtitle mb-2 text-muted'>" + 'From the Washington Post' + "</h6>" +
+                                            "</div>" +
+                                            "<div class='collapse' id='content"+i+"'>" +
+                                                "<div style='float: right; clear: right; margin-left: 5px'>" +
+                                                    "<iframe width='420' height='300' align='right' src='https://www.youtube.com/embed/"+ subtitlesData[i]["topicSubtitle"]["videoId"] +"'>" + "</iframe>" +
+                                                "</div>" +
+                                                "<p class='card-text'>" + subtitlesData[i]["topicSubtitle"]["subtitleText"] + "</p>" +
+                                            "</div>" +
                                         "</div>";
 
                                 insertPoint.appendChild(card);
@@ -138,26 +163,44 @@
                         }
                     }
 
+                    function noResults() {
+                        const noResultsContainer = document.getElementById("no-results");
+                        noResultsContainer.style.display = "block";
+                        const insertPoint = document.getElementById("no-results");
+                        const textDiv = document.createElement('div');
+                        textDiv.className = "no-results-inner";
+                        textDiv.innerHTML =
+                                "<h5 class='text-white'>" + "No Results: Please try again" + "</h5>" +
+                                "<h6 class='text-white'>" + "Your search may be too specific, try a more general term" + "</h6>";
+
+                        insertPoint.appendChild(textDiv);
+                    }
+
                     function populateTopicsMenu(topics, nD, sD) {
+                        console.log(nD)
                         const eventsList = document.getElementById("events");
                         eventsList.style.display = "none";
-                        const articleContainer = document.getElementById("article-container");
-                        articleContainer.style.display = "block";
-                        document.getElementById("topics-container").innerHTML = "<a href='#' class='nav-link h5 text-white my-2'>" +
-                        'Topics' +
-                        "</a>";
-                        const insertPoint = document.getElementById("topics-container");
-                        for (let i = 0; i < topics.length; i++) {
-                            let topicsString = topics[i].join(", ");
-                            const listEl = document.createElement('li');
-                            listEl.className = "nav-link text-white";
-                            listEl.onclick = function() {
-                                populateNewsData(nD, i);
-                                populateSubtitlesData(sD, i);
-                            };;
-                            listEl.innerHTML = "<span class='mx-2'>" + topicsString + "</span>"
+                        if (nD.length === 0) {
+                            noResults()
+                        } else {
+                            const articleContainer = document.getElementById("article-container");
+                            articleContainer.style.display = "block";
+                            document.getElementById("topics-container").innerHTML = "<a href='#' class='nav-link h5 text-white my-2'>" +
+                            'Topics' +
+                            "</a>";
+                            const insertPoint = document.getElementById("topics-container");
+                            for (let i = 0; i < topics.length; i++) {
+                                let topicsString = topics[i].join(", ");
+                                const listEl = document.createElement('li');
+                                listEl.className = "nav-link text-white";
+                                listEl.onclick = function () {
+                                    populateNewsData(nD, i);
+                                    populateSubtitlesData(sD, i);
+                                };;
+                                listEl.innerHTML = "<span class='mx-2'>" + topicsString + "</span>"
 
-                            insertPoint.appendChild(listEl);
+                                insertPoint.appendChild(listEl);
+                            }
                         }
                     }
 
@@ -179,17 +222,16 @@
                                     }));
                                     break;
                                 case "modellingComplete":
-                                    populateTopicsMenu(message.topics, message.newsData, message?.subtitlesData);
-                                    // commenting out because I hit the daily quota
+                                    populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
                                     //ws.send(JSON.stringify({
                                       //  messagetype: "searchYoutube",
                                         //searchTerm: message.topics,
                                         //news: message.newsData,
                                     //}));
                                     break;
-                                case "youtubeSearchComplete":
-                                    // commenting out because I hit the daily quota
-                                    // populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
+                                //case "youtubeSearchComplete":
+                                  //  populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
+                                    //break;
                                 case "searchTerm":
                                     console.log("searching...");
                                     console.log(message.searchTerm);

@@ -9,9 +9,13 @@
     float: right;
     overflow: scroll;
 }
+.card-subtitle-container {
+    padding-top: 5px;
+}
 .card-text {
     text-align: left;
 }
+
 .side-navbar {
     width: 180px;
     display: flex;
@@ -36,13 +40,11 @@ form{
     padding-top: 5%;
 }
 
-/* RESULTS PAGE
-*/
 .header-wrapper.results {
     margin-bottom: 5%;
 }
 .card{
-    background-color: #808080;
+    background-color: #100901;
     margin-top: 3%;
 }
 cards-wrapper{

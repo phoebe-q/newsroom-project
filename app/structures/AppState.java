@@ -10,13 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-/**
- * This class can be used to hold information about the on-going game.
- * Its created with the GameActor.
- *
- * @author Dr. Richard McCreadie
- *
- */
 public class AppState {
 
     public List<WPArticle> newsResults;
