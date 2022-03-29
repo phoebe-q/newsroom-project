@@ -137,7 +137,7 @@ public class SearchYoutube implements EventProcessor{
         YouTube.Search.List request = youtubeService.search()
                 .list(snippet);
         SearchListResponse response = request.setChannelId("UCHd62-u_v4DvJ8TCFtpi4GA") //channel id for Washington Post
-                .setMaxResults(5L)
+                .setMaxResults(10L)
                 .setQ(searchTerm)
                 .setType(video)
                 .setVideoCaption("closedCaption")

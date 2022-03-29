@@ -21,7 +21,7 @@
             </div>
         </nav>
         <div class="welcome" id="welcome-message" style="display: block">
-            <h3>Welcome to Newsroom - your news consolidation tool</h3>
+            <h3>Welcome to Newsroom - your news aggregation tool</h3>
             <h4>Enter the term you want to know more about and hit search to begin!</h4>
         </div>
         <ul id="events" style="display: block"></ul>
@@ -223,15 +223,7 @@
                                     break;
                                 case "modellingComplete":
                                     populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
-                                    //ws.send(JSON.stringify({
-                                      //  messagetype: "searchYoutube",
-                                        //searchTerm: message.topics,
-                                        //news: message.newsData,
-                                    //}));
                                     break;
-                                //case "youtubeSearchComplete":
-                                  //  populateTopicsMenu(message.topics, message.newsData, message.subtitlesData);
-                                    //break;
                                 case "searchTerm":
                                     console.log("searching...");
                                     console.log(message.searchTerm);
