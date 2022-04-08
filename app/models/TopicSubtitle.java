@@ -1,8 +1,8 @@
 package models;
 
 public class TopicSubtitle {
-    int topicId;
-    Subtitle topicSubtitle;
+    int topicId; // index corresponding to the topic the subtitles are sorted into
+    Subtitle topicSubtitle; // subtitle instance
 
     public TopicSubtitle(int topicId, Subtitle topicSubtitle) {
         this.topicId = topicId;

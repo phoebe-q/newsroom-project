@@ -4,14 +4,14 @@ import java.util.List;
 
 public class WPArticleIn {
 
-    public String id;
-    public String article_url;
-    public String title;
-    public String author;
-    public long published_date;
-    public List<Content> contents;
-    public String type;
-    public String source;
+    public String id; // unique id
+    public String article_url; // article url linking to Washington Post website
+    public String title; // title of the article
+    public String author; // author of the article
+    public long published_date; // date the article was published
+    public List<Content> contents; // contents of the article - text of the article, additional links, date, kicker etc
+    public String type; // type of the article
+    public String source; // source of the article
 
     public WPArticleIn() {
 

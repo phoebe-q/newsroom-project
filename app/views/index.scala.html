@@ -48,20 +48,21 @@
 
                     let ws;
 
-
+                    // for responsive view
                     document.getElementById('sidebar').addEventListener('click',function(){
                         document.getElementById('sidebar').classList.toggle('open');
                     });
 
                     function init() {
                         openWebSocketConnection();
-                        window.setInterval(function () {
+                        window.setInterval(function () { // to keep websocket connection open
                             ws.send(JSON.stringify({
                                 messagetype: "heartbeat",
                             }));
                         }, 3000);
                     }
 
+                    // calls search for articles and youtube
                     function search() {
                         const welcomeMessage = document.getElementById("welcome-message");
                         welcomeMessage.style.display = "none";
@@ -85,6 +86,7 @@
                         }));
                     }
 
+                    // adds alerts about systems progress
                     function addAlert(mess) {
                         const noResultsContainer = document.getElementById("no-results");
                         noResultsContainer.style.display = "none";
@@ -98,6 +100,7 @@
                         document.getElementById("events").appendChild(alert);
                     }
 
+                    // populates news articles corresponding to topic
                     function populateNewsData(newsData, count) {
                         document.getElementById("card-container").innerHTML = "";
 
@@ -146,6 +149,7 @@
                         }
                     }
 
+                    // populates subtitles corresponding to topic
                     function populateSubtitlesData(subtitlesData, count) {
                         const insertPoint = document.getElementById("card-container");
                         for (let i = 0; i < subtitlesData.length; i++) {
@@ -171,6 +175,7 @@
                         }
                     }
 
+                    // view for if no results were returned
                     function noResults() {
                         const noResultsContainer = document.getElementById("no-results");
                         noResultsContainer.style.display = "block";
@@ -184,6 +189,7 @@
                         insertPoint.appendChild(textDiv);
                     }
 
+                    // populate topics sidebar menu
                     function populateTopicsMenu(topics, nD, sD) {
                         console.log(nD)
                         const eventsList = document.getElementById("events");
@@ -212,6 +218,7 @@
                         }
                     }
 
+                    // websocket connection - handles calls from the backend
                     function openWebSocketConnection() {
                         const wsURL = document.getElementById("mainBody").getAttribute("wsdata");
 

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import events.EventProcessor;
@@ -13,7 +12,7 @@ import events.SearchYoutube;
 import events.StartSearch;
 import events.StartTopicModelling;
 import play.libs.Json;
-import models.AppState;
+import structures.SiteState;
 
 public class WebSocketActor extends AbstractActor {
 
@@ -21,16 +20,10 @@ public class WebSocketActor extends AbstractActor {
         return Props.create(WebSocketActor.class, out);
     }
     private Map<String,EventProcessor> eventProcessors;
-    private ObjectMapper mapper = new ObjectMapper();
-    private AppState appState; // A class that can be used to hold game state information
+    private SiteState siteState;
 
     private final ActorRef out;
 
-    /**
-     * Constructor for the WebSocketActor. This is called by the HomeController when the websocket
-     * connection to the front-end is established.
-     * @param out
-     */
     public WebSocketActor(ActorRef out) {
 
         this.out = out;
@@ -39,11 +32,9 @@ public class WebSocketActor extends AbstractActor {
         eventProcessors.put("searchYoutube", new SearchYoutube());
         eventProcessors.put("topicModelStart", new StartTopicModelling());
 
-        // Initalize a new game state object
-        appState = new AppState();
+        siteState = new SiteState();
 
         try {
-            System.out.println("try statement in WSA constructor");
             ObjectNode readyMessage = Json.newObject();
             readyMessage.put("messagetype", "default");
             out.tell(readyMessage, out);
@@ -68,11 +59,11 @@ public class WebSocketActor extends AbstractActor {
 
         EventProcessor processor = eventProcessors.get(messageType);
         if (processor==null) {
-            // Unknown event type received
+            // if event type is unknown
             System.err.println("WebSocketActor: Received unknown event type "+messageType);
         } else {
             System.out.println("message type is " + messageType);
-            processor.processEvent(out, appState, message); // process the event
+            processor.processEvent(out, siteState, message); // process the event
         }
     }
 }

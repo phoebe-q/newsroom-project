@@ -17,7 +17,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import play.libs.Json;
-import models.AppState;
+import structures.SiteState;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,26 +25,26 @@ import java.util.stream.Collectors;
 
 public class StartSearch implements EventProcessor {
     @Override
-    public void processEvent(ActorRef out, AppState siteState, JsonNode message) throws IOException {
+    public void processEvent(ActorRef out, SiteState siteState, JsonNode message) throws IOException {
 
         {ObjectNode alert = Json.newObject();
         alert.put("messagetype", "alert");
         alert.put("text", "Searching Articles...");
         out.tell(alert, out);}
 
-        String lowercaseTerms = message.get("searchTerm").asText().toLowerCase();
-        //String[] queryTerms = lowercaseTerms.split(" ");
-                //message.get("searchTerm").asText().split( " ");
         ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(600000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
-        QueryBuilder query = QueryBuilders.matchQuery("title", message.get("searchTerm").asText()); //lowercaseTerms);
+        QueryBuilder query = QueryBuilders.matchQuery("title", message.get("searchTerm").asText());
         SearchRequest searchRequest = new SearchRequest("washington-post");
+
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
-        searchSourceBuilder.size(40);
+        searchSourceBuilder.size(40); //returns 40 items
+
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequest.source(searchSourceBuilder);
+
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] searchHits = response.getHits().getHits();
 

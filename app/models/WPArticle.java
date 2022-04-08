@@ -10,16 +10,16 @@ import java.util.*;
 
 public class WPArticle {
 
-    public String id;
-    public String article_url;
-    public String title;
-    public String author;
-    public long published_date;
-    public String category;
-    public String contents;
-    public Image image;
-    public String type;
-    public String source;
+    public String id; // unique id for article
+    public String article_url; // url to article on washington post site
+    public String title; // title of article
+    public String author; // author of article
+    public long published_date; // date published
+    public String category; // taken from kicker, a general category of article
+    public String contents; // string contents of the article (the article text)
+    public Image image; // any image associated with the article
+    public String type; // type of the article
+    public String source; // source
 
     public WPArticle() {
 

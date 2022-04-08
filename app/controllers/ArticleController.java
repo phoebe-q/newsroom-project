@@ -29,9 +29,8 @@ public class ArticleController extends Controller {
         ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder().connectedTo("localhost:9200").withSocketTimeout(6000000).build();
         RestHighLevelClient client = RestClients.create(clientConfiguration).rest();
-        BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/nesubset.json"));
+        BufferedReader reader = new BufferedReader(new FileReader("/Users/phoebe/Desktop/Fourth Year/Honours Project/newsroom/nesubset.json"));
         ObjectMapper objectMapper = new ObjectMapper();
-
         IndexRequest indexRequest = new IndexRequest("washington-post");
 
         String line;
@@ -52,7 +51,6 @@ public class ArticleController extends Controller {
                         contentBuilder.append(c.getContent()).append("<br />");
                     } else if (Objects.equals(c.getType(), "date")) {
                         date = Long.parseLong(c.getContent());
-                        System.out.println("Date = " + date);
                     }
                 }
                 String contents = contentBuilder.toString();
@@ -65,7 +63,6 @@ public class ArticleController extends Controller {
                     IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
                     System.out.println(response.getResult());
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

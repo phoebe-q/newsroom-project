@@ -2,13 +2,13 @@ package models;
 
 public class Image {
 
-    String fullcaption; // caption information
+    String fullcaption; // caption
     String imageURL; // url of image
-    String mime; // mime (Multipurpose Internet Mail Extensions) type of the item (usually text/html)
+    String mime; // mime (Multipurpose Internet Mail Extensions) type
     String imageHeight; // image height
     String imageWidth; // image width
-    String type; // the type of the content (usually sanitized_html)
-    String blurb; // image associated text
+    String type; // the type of the content
+    String blurb; // text related to the image
 
     public Image() {
 

@@ -3,8 +3,8 @@ package models;
 import models.WPArticle;
 
 public class TopicArticle {
-    int topicId;
-    WPArticle article;
+    int topicId; // index corresponding to the topic the article is sorted into
+    WPArticle article; // article
 
     public TopicArticle(int topicId, WPArticle article) {
         this.topicId = topicId;

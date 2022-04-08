@@ -38,7 +38,7 @@ public class HomeController extends Controller {
     }
 
     public Props createWebSocketActor(ActorRef out) {
-        return Props.create(WebSocketActor.class, out); // calls the constructor for Game Actor
+        return Props.create(WebSocketActor.class, out);
     }
 
 }

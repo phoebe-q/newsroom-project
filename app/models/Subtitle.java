@@ -1,9 +1,9 @@
 package models;
 
 public class Subtitle {
-    String videoId;
-    String videoTitle;
-    String subtitleText;
+    String videoId; // id of the video
+    String videoTitle; // title of the video
+    String subtitleText; // subtitles from the video
 
     public Subtitle(String videoId, String videoTitle, String subtitleText) {
         this.videoId = videoId;

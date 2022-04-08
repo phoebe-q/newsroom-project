@@ -8,24 +8,24 @@ import java.io.Serializable;
 public class Content implements Serializable {
     private static final long serialVersionUID = -664641145229312192L;
 
-    String content; // the string content of the item
-    String subtype; // an optional subtype for the item (e.g. paragraph)
-    String type; // the type of the content (usually sanitized_html)
-    String mime; // mime (Multipurpose Internet Mail Extensions) type of the item (usually text/html)
+    String content; // the content e.g. a line of text from the article
+    String subtype; // subtype for the content
+    String type; // type of the content
+    String mime; // mime (Multipurpose Internet Mail Extensions) type
 
     // if image
-    String fullcaption; // caption information
+    String fullcaption; // caption
     String imageURL; // url of image
     String imageHeight; // image height
     String imageWidth; // image width
-    String blurb; // image associated text
+    String blurb; // text related to the image
 
     // if creditation
     String role;
     String name;
     String bio;
 
-    // if Kicker
+    // if kicker (category)
     String kicker;
 
     public Content() {
