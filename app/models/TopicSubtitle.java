@@ -1,4 +1,4 @@
-package structures;
+package models;
 
 public class TopicSubtitle {
     int topicId;

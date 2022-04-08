@@ -12,7 +12,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <div class="navbar justify-content-end" id="navbarSupportedContent">
                     <div class="d-flex">
                         <input class="form-control me-2" type="search" id="searchTerm" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-light" onclick="search()">Search</button>
@@ -28,6 +28,9 @@
         <div id="no-results" style="display: none"></div>
         <div id="article-container" style="display: none">
             <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
+                <ul class="nav flex-column text-white w-100" id="topic-title-container">
+                    Topics
+                </ul>
                 <ul class="nav flex-column text-white w-100" id="topics-container">
 
                 </ul>
@@ -44,6 +47,11 @@
             <script type="text/javascript">
 
                     let ws;
+
+
+                    document.getElementById('sidebar').addEventListener('click',function(){
+                        document.getElementById('sidebar').classList.toggle('open');
+                    });
 
                     function init() {
                         openWebSocketConnection();
@@ -81,9 +89,9 @@
                         const noResultsContainer = document.getElementById("no-results");
                         noResultsContainer.style.display = "none";
                         const alert = document.createElement('li')
-                        alert.className = "alert";
+                        alert.className = "alert-container";
                         alert.innerHTML =
-                                "<div class='alert alert-dark' role='alert'>" +
+                                "<div class='alert alert-dark text-white' role='alert'>" +
                                     mess +
                                 "</div>"
 
@@ -185,7 +193,7 @@
                         } else {
                             const articleContainer = document.getElementById("article-container");
                             articleContainer.style.display = "block";
-                            document.getElementById("topics-container").innerHTML = "<a href='#' class='nav-link h5 text-white my-2'>" +
+                            document.getElementById("topic-title-container").innerHTML = "<a href='#' class='nav-link h5 text-white my-2'>" +
                             'Topics' +
                             "</a>";
                             const insertPoint = document.getElementById("topics-container");

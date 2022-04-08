@@ -80,8 +80,47 @@ cards-wrapper{
 active-cont {
     margin-left: 180px;
 }
-.alert {
+.alert-container {
     list-style-type: none;
     line-height: 1rem;
     margin-bottom: 0px; !important;
+}
+
+.alert {
+    background-color: #100901;
+    border-color: #100901;
+}
+
+@media(max-width: 830px){
+    #sidebar {
+        position: relative;
+        display: inline-block;
+        margin: auto;
+        padding-bottom: 0;
+    }
+
+    #topics-container {
+        display: none;
+        position: absolute;
+        background-color: #100901;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding: 12px 16px;
+        z-index: 1;
+    }
+
+    #sidebar.open #topics-container {
+        display: block;
+    }
+
+    #card-container {
+        width: 100%;
+    }
+}
+
+@media(max-width:400px){
+    .navbar-brand {
+        margin-left: 40%;
+        padding-bottom: 5%;
+    }
 }

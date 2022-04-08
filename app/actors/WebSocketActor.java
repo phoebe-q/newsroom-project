@@ -3,7 +3,6 @@ package actors;
 import akka.actor.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,10 +12,8 @@ import events.EventProcessor;
 import events.SearchYoutube;
 import events.StartSearch;
 import events.StartTopicModelling;
-import structures.TopicArticle;
-import structures.TopicSubtitle;
 import play.libs.Json;
-import structures.AppState;
+import models.AppState;
 
 public class WebSocketActor extends AbstractActor {
 

@@ -2,7 +2,6 @@ package events;
 
 import akka.actor.ActorRef;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.WPArticle;
@@ -18,13 +17,10 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import play.libs.Json;
-import structures.AppState;
+import models.AppState;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class StartSearch implements EventProcessor {
@@ -46,7 +42,7 @@ public class StartSearch implements EventProcessor {
         SearchRequest searchRequest = new SearchRequest("washington-post");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
-        searchSourceBuilder.size(30);
+        searchSourceBuilder.size(40);
         searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequest.source(searchSourceBuilder);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);

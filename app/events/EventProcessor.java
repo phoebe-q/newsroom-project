@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import akka.actor.ActorRef;
 import com.sapher.youtubedl.YoutubeDLException;
-import structures.AppState;
+import models.AppState;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

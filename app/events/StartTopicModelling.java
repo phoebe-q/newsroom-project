@@ -13,10 +13,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.WPArticle;
 import org.jsoup.Jsoup;
 import play.libs.Json;
-import structures.AppState;
-import structures.Subtitle;
-import structures.TopicArticle;
-import structures.TopicSubtitle;
+import models.AppState;
+import models.Subtitle;
+import models.TopicArticle;
+import models.TopicSubtitle;
 
 import java.io.File;
 import java.io.IOException;

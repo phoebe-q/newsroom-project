@@ -1,6 +1,6 @@
 # Timelog
 
-- Feed Me! Automatic identification and crawling of event feeds from the web and social media
+- Newsroom: A news aggregation tool
 - Phoebe Quinn
 - 2305116Q
 - Richard McCreadie
@@ -16,122 +16,110 @@
 
 ### 1 Oct 2021
 
-- _0.5 hour_ Met with supervisor and decided basics of project
+- _0.5 hour_ Met with supervisor and decided basics of project, talk about a few different approaches with the intention to decide by next meeting
 
 ### 4 Oct 2021
 
+- _2 hours_ Researched related products for possible approaches to project
 - _1 hour_ Read the project guidance notes
-- _0.5 hour_ Set up new technologies using for project
-- _1.5 hours_ Read about new technologies and read Youtube API docs
+- _1.5 hours_ Researched different technologies and read docs to get an idea of what should be used.
 
 ## 6 Oct 2021
 
-- _1 hour_
+- _4 hours_ Decided on a news based system, looked more detailed into related systems - set up accounts and browsed to get an idea of what was already available.
 
+## 8 Oct 2021
 
-
+- _0.5 hours_ Met with supervisor and discussed more about the project. Discussed ideas for news based system.
 
 ## Week 2
 
-### 11 Oct 2021
+### 15 Oct 2021
+- _0.5 hour_ Met with supervisor and discussed basics more discussed using Play as a possible technology. Call was interrupted due to wifi problems.
+- _4 hour_ Researched topic modelling for implementation
 
-- _0.5 hour_ Met with supervisor and decided basics of project
+### 16 Oct 2021
+- _3 hours_ researched web scraping for articles and attempted to write basic code to do this
 
-### 4 Oct 2021
-
-- _1 hour_ Read the project guidance notes
-- _0.5 hour_ Set up new technologies using for project
-- _1.5 hours_ Read about new technologies and read Youtube API docs
-
-## 6 Oct 2021
-
-- _1 hour_
-
-
+### 17 Oct 2021
+- _7 hours_ continued trial of web scraping
 
 ## Week 3
 
-### 18 Oct 2021
+### 19 Oct 2021
 
-- _0.5 hour_ Met with supervisor and decided basics of project
+- _3 hours_ Discarded original approach to scraping and trialed new attempt
+## 20 Oct 2021
 
-### 4 Oct 2021
+- _3.5 hours_ Final attempt at scraping - decided it was outwith the project scope on this project and would use dataset instead
 
-- _1 hour_ Read the project guidance notes
-- _0.5 hour_ Set up new technologies using for project
-- _1.5 hours_ Read about new technologies and read Youtube API docs
+### 22 Oct 2021
 
-## 6 Oct 2021
-
-- _1 hour_
-
-
+- _0.5 hour_ Met with supervisor to discuss scraping and using dataset
 
 ## Week 4
 
 ### 25 Oct 2021
 
-- _0.5 hour_ Met with supervisor and decided basics of project
+- _2.5 hours_ Read again about topic modelling
 
-### 4 Oct 2021
+### 26 Oct 2021
 
-- _1 hour_ Read the project guidance notes
-- _0.5 hour_ Set up new technologies using for project
-- _1.5 hours_ Read about new technologies and read Youtube API docs
+- _3 hours_ Read about issues current consumers feel with the news online
+- _3 hours_ Planned general ideas for the system
 
-## 6 Oct 2021
+## 29 Oct 2021
 
-- _1 hour_
+- _0.5 hours_ Met with supervisor discussed findings and next steps
 
+## 30 Oct 2021
 
+- _4.5 hours_ Created user personas for the project and use cases
 
 ## Week 5
 
-### 1 November 2021
+### 1 Nov 2021
 
-- _0.5 hour_ Met with supervisor and decided basics of project
+- _3 hours_ Created requirements list for project and sorted into MoSCoW format
+- _4 hours_ Researched Architecture Diagrams and created my own basic one
 
-### 4 Oct 2021
+### 2 Nov 2021
 
-- _1 hour_ Read the project guidance notes
-- _0.5 hour_ Set up new technologies using for project
-- _1.5 hours_ Read about new technologies and read Youtube API docs
+- _4 hours_ designed several different approaches to the system on paper prototypes
+- _2 hours_ gained advice from friends on the best design approach
 
-## 6 Oct 2021
+## 4 Nov 2021
 
-- _1 hour_
+- _1 hour_ looked into best design tools to use
 
-
-
+## 5 Nov 2021
+- _0.5 hours_ met with supervisor for weekly meeting
 ## Week 6
 
 ### 8 Nov 2021
 
-- _0.5 hour_ Met with supervisor and decided basics of project
+- _0.5 hour_ Met with supervisor discussed design stage
+- _2 hours_ started designs using draw.io but was too basic so decided to use Figma instead
 
-### 4 Oct 2021
+### 9 Nov 2021
+- _3 hours_ Created basic designs in Figma
 
-- _1 hour_ Read the project guidance notes
-- _0.5 hour_ Set up new technologies using for project
-- _1.5 hours_ Read about new technologies and read Youtube API docs
-
-## 6 Oct 2021
-
-- _1 hour_
+### 10 Nov 2021
+- _2 hours_ made designs more detailed in Figma
 
 
 
 ## Week 7
 
 ### 15 Nov 2021
-
-- _2.5 hours_ Created requirements list for project and sorted into MoSCoW format
-- _4 hours_ Researched Architecture Diagrams and created my own basic one
+- _3 hours_ completed Figma designs
 
 ### 16 Nov 2021
 
-- _0.5 hours_ Met with Richard for weekly advisor meeting
+- _0.5 hours_ Met with supervisor for weekly meeting discussed designs and further progress
 
+### 18 Nov 2021
+- _3.5 hours_ read up on how play is structured and decided to start by implementing views
 
 ## Week 8
 
@@ -142,43 +130,40 @@
 
 ### 23 Nov 2021
 
-- _1 hour_ Tried a new approach to view navigation from Play Framework examples - did not work. Decided to keep in and wait for Richard's help
-- _0.5 hours_ Met with Richard and got help with view navigation
+- _1 hour_ Tried a new approach to view navigation from Play Framework examples - did not work. Decided to keep in and wait for supervisor advice
+- _0.5 hours_ Met with supervisor and got advice with view navigation
 - _1 hour_ Fixed basic view navigation - can navigate between pages now have to add variable to pass
 - _1.5 hours_ Tried to add in variable to pass to Results view - this resulted in an error so spent a while trying to fix. There is almost no info on the internet so process went very slowly.
 
 ## Week 9
+- Illness this week stalled development
 
 ### 29 Nov 2021
 
-- _4 hours_ Worked on basic view implementation - stall: couldn't get the view linking to work messaged Richard, awaiting response. The struggle was that the search() function won't call.
-- _1 hour_ Refactored Architecture Diagram to suit NewsRoom and be more specific.
+- _4 hours_ tried again with passing variables between views - from research online it should be working
+
+### 30 Nov 2021
+
+- _3 hours_ looked at alternative structures online to stop the issue with passing between views
 
 
 ## Week 10
 
-### 6 Dec 2021
-
-- _4 hours_ Worked on basic view implementation - stall: couldn't get the view linking to work messaged Richard, awaiting response. The struggle was that the search() function won't call.
-- _1 hour_ Refactored Architecture Diagram to suit NewsRoom and be more specific.
-
+- no development this week due to exams
 
 ## Week 11
 
 ### 13 Dec 2021
-
-- _4 hours_ Worked on basic view implementation - stall: couldn't get the view linking to work messaged Richard, awaiting response. The struggle was that the search() function won't call.
-- _1 hour_ Refactored Architecture Diagram to suit NewsRoom and be more specific.
-
+- _2 hours_ researched datasets
+- _2 hours_ selected BBC dataset and explored to understand how it was structured
 
 ## Week 12
 
+- Christmas stalled development this week
+
 ### 20 Dec 2021
-
-- _4 hours_ Worked on basic view implementation - stall: couldn't get the view linking to work messaged Richard, awaiting response. The struggle was that the search() function won't call.
-- _1 hour_ Refactored Architecture Diagram to suit NewsRoom and be more specific.
-
-
+- _2 hours_ reread previous research I had done to familiarise with frameworks
+- _3 hours_ created MySql db for use with ES
 
 ## Week 13
 
@@ -189,7 +174,7 @@
 
 ### 29 Dec 2021
 
-- _2.5 hours_  Had dependecy issues with Ebean, spent a long time working out what exactly was wrong and correcting the error
+- _2.5 hours_  Had dependency issues with Ebean, spent a long time working out what exactly was wrong and correcting the error
 
 
 ### 2 Jan 2022
@@ -202,7 +187,7 @@
 
 ### 3 Jan 2022
 
-- _3 hours_ Continued to try to link E
+- _3 hours_ Continued to try to link Ebean - realised it was not necessary for project so discarded
 - _3 hours_ Attempted to link MySql database with ElasticSearch instance, found this needlessly difficult so decided to populate the ElasticSearch instance rather than trying to link
 
 
@@ -221,17 +206,11 @@
 
 ### 7 Jan 2022
 
-- _2 hours_ Tried to fix search functionality on my own - application behaving in a way that is not logical so could not understand what was wrong in order to fix. 
+- _4 hours_ again attempted to fix search functionality to no avail
 
 ### 8 Jan 2022
 
-- _2 hours_ Tried to fix search functionality on my own - application behaving in a way that is not logical so could not understand what was wrong in order to fix. 
-
-
-### 9 Jan 2022
-
-- _2 hours_ Tried to fix search functionality on my own - application behaving in a way that is not logical so could not understand what was wrong in order to fix. 
-
+- _5 hours_ noticed issues with ElasticSearch population - tried to fix but couldn't
 
 
 ## Week 15
@@ -326,14 +305,18 @@
 ## Week 18
 
 ### 31 Jan 2022
+- _1.5 hours_ Researched other packages that allow retrieval of subtitles and discovered YoutubeDL for Java.
+- _1 hour_ Implemented YouTubeDL, however subtitles have to be written and read from file: will attempt to find workaround
 
 ## Week 19
 
 ### 7 Feb 2022
+- _3 hours_ stalled dev due to errors passing data
 
 ## Week 20
 
 ### 14 Feb 2022
+- _2 hours_ refactored display of articles
 
 ### 15 Feb 2022
 - Had to move weekly meeting with Richard due to hurting my back and being unable to sit or stand - also stalled development by a couple of days.
@@ -342,12 +325,21 @@
 - _1 hour_ - Met with Richard for our weekly session - we discussed changing the application to be single page to make processes more visible to the user.
 
 ## Week 21
-
 ### 21 Feb 2022
+- _4 hours_ refactored designs to suit this one-page version of the system
+
+### 22 Feb 2022
+- _4 hours_ refactored stucture of application to include article search, youtube search and topic modelling as events
 
 ## Week 22
 
 ### 28 Feb 2022
+- _3 hours_ refactored topic modelling to be more modular
+- _1 hour_ refactored search of articles
+- _2 hours_ refactored search of youtube and downloading of subtitles to be more modular
+
+### 1 March 2022
+- _3 hours_ discovered bugs in both topic modelling and subtitles - debugged to attempt to understand why this was happening
 
 ### 5 March 2022
 - _1 hour_ - Fixed issue with subtitles not matching the correct video. Had to make sure all files deleted after use and changed .vtt file to have title of videoID rather than integer to make it easier to match.
@@ -356,6 +348,94 @@
 - _3.5 hours_ - Fixed topic modelling issue of sorted text not matching correct topic
 - _1 hour_ - Added images to article view, tried to repopulate database with newline between paragraphs did not work will have to try a different approach
 
+### 6 March 2022
+- _5 hours_ conducted pilot tests with a group of participants - went very slowly as it was my first time implementing a testing procedure
+
 ## Week 23
 
-### 7 March 2022
+### 8 March 2022
+- _2 hours_ Analysed data returned from pilot tests to create final changes to the system.
+- _0.5 hours_ Met with supervisor and discussed testing and changes, supervisor advised I make changes quickly in order to get everything done in time for the deadline
+
+### 9 March 2022
+- _3 hours_ Refactored the design requested changes from pilot study
+- _1 hour_ Refactored search to search "title" field as it produced better results, trialed this several times
+- 
+## Week 24
+
+### 14 March 2022
+- _3 hours_ Began writing dissertation started with Chapter 1 and wrote aims and motivation
+
+
+### 15 March 2022
+- _0.5 hours_ Met with supervisor and  discussed that I would be very busy this week with hand-ins from other courses but next week all of my time would be devoted to the project 
+
+### 16 March 2022
+- _2 hours_ collected designs and other images I would need to the project in one place to make writing easier
+
+## Week 25
+- It should be noted that anxiety - the reason I received a week extension was particularly bad this week and delayed a lot of things being completed
+### 22 March 2022
+- _0.5 hours_ met with supervisor, expressed concern about completion due to anxiety and discussed my meeting with student wellbeing to discuss an extension
+### 23 March 2022
+- _3 hours_ wrote background section for dissertation including related products
+### 24 March 2022
+- _3 hours_ wrote background section for dissertation including related products
+
+### 25 March 2022
+- _2 hours_ looking for the folder I had put my paper prototypes into at the start of the project
+
+### 26 March 2022
+- _6 hours_ wrote design section for dissertation
+- _3 hours_ outlined implementation section
+
+### 27 March 2022
+- _8 hours_ wrote implementation section
+
+## Week 26
+
+### 29 March 2022
+- _0.5 hours_ met with supervisor who read over what was already in dissertation - provided feedback that more detail was needed in almost every section
+- _0.5 hours_ created to do list from supervisor comments.
+
+### 31 March 2022
+- _1 hour_ conducted first full experiment on first participant
+- _6 hours_ refactoring dissertation to be more detailed as supervisor suggested
+- _1 hour_ conducted second full experiment on second participant
+
+### 1 April 2022
+- _2 hours_ added additional sections to background, design and implementation as advised by supervisor
+- _1 hour_ researched how to test performance of a system in dev tools and discovered Lighthouse
+- _1 hour_ downloaded and used lighthouse on the Newsroom site.
+
+### 2 April 2022
+- _5.5 hours_ conducted final experiment on remaining 8 participants
+
+## Week 27
+
+### 4 April 2022
+- _8 hours_ Wrote analysis chapter, beginning with results of testing, moving onto lighthouse results and then requirements
+- _2 hours_ Wrote conclusion about success of project and possible future work
+
+### 5 April 2022
+- _7 hours_ Created presentation about the system
+- _2 hours_ Wrote speech notes for presentation
+- _2 hours_ Attempted to record presentation, tools used cut audio in and out and mistakes kept being made
+
+### 6 April 2022
+- _1 hour_ got presentation recorded, but it was well overtime at 25 minutes, cut down to make shorter
+- _1 hour_ recorded presentation again, but again it was over time at 20 minutes so cut down again
+- _0.5 hours_ recorded presentation and it was 14 minutes, watched through and everything worked
+- _1 hour_ realised presentation video had to be converted to mp4, found a site to do this, downloaded and watched again to make sure it was correct
+
+### 7 April 2022
+
+- _6 hours_ read through dissertation and refactored to tighten up
+- _1 hour_ downloaded testing results to get ready for submission
+- _1 hour_ added appendices to dissertation
+
+### 8 April 2022
+
+- _2 hours_ final read through of dissertation and clean up
+- _1.5 hours_ final read through of code and clean up
+- _1 hour_ format for submission

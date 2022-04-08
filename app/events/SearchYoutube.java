@@ -1,10 +1,8 @@
 package events;
 
 import akka.actor.ActorRef;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -26,9 +24,8 @@ import com.sapher.youtubedl.YoutubeDLRequest;
 import com.sapher.youtubedl.YoutubeDLResponse;
 import org.apache.commons.io.FileUtils;
 import play.libs.Json;
-import structures.AppState;
-import structures.Subtitle;
-import structures.TopicSubtitle;
+import models.AppState;
+import models.Subtitle;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -137,7 +134,7 @@ public class SearchYoutube implements EventProcessor{
         YouTube.Search.List request = youtubeService.search()
                 .list(snippet);
         SearchListResponse response = request.setChannelId("UCHd62-u_v4DvJ8TCFtpi4GA") //channel id for Washington Post
-                .setMaxResults(10L)
+                .setMaxResults(5L)
                 .setQ(searchTerm)
                 .setType(video)
                 .setVideoCaption("closedCaption")
@@ -168,7 +165,7 @@ public class SearchYoutube implements EventProcessor{
 
         // Build request
         YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
-        request.setOption("all-subs");		// --write-sub
+        request.setOption("all-subs");		// --all-subs
         request.setOption("skip-download");	// --skip-download
         request.setOption("sub-lang", "en"); // --sub-lang en
         request.setOption("output", ""+id); // --output specifies file to output subs to
